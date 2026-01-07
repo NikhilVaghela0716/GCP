@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO https://raw.githubusercontent.com/NikhilVaghela07/GCP/main/Speech%20to%20Text%20Transcription%20with%20the%20Cloud%20Speech%20API/NikhilVaghela.sh
+curl -LO https://raw.githubusercontent.com/NikhilVaghela07/GCP/main/GCP/Speech%20to%20Text%20Transcription%20with%20the%20Cloud%20Speech%20API/NikhilVaghela.sh
 sudo chmod +x NikhilVaghela.sh
 ./NikhilVaghela.sh
 
