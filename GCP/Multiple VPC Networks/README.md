@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO https://raw.githubusercontent.com/NikhilVaghela07/GCP/main/GCP/Multiple%20VPC%20Networks/NikhilVaghela0716.sh
+curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/GCP/Multiple%20VPC%20Networks/NikhilVaghela0716.sh
 sudo chmod +x NikhilVaghela0716.sh
 ./NikhilVaghela0716.sh
 
