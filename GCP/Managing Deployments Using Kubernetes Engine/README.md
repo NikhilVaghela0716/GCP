@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO https://raw.githubusercontent.com/NikhilVaghela07/GCP/main/GCP/Managing%20Deployments%20Using%20Kubernetes%20Engine/NikhilVaghela0716.sh
+curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/GCP/Managing%20Deployments%20Using%20Kubernetes%20Engine/NikhilVaghela0716.sh
 sudo chmod +x NikhilVaghela0716.sh
 ./NikhilVaghela0716.sh
 ```
