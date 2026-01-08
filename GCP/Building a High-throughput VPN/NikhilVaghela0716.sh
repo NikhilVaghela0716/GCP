@@ -18,15 +18,9 @@ UNDERLINE_TEXT=$'\033[4m'
 
 clear
 
-# ================= HEADER =================
-echo -e "${ORANGE_TEXT}${BOLD_TEXT}══════════════════════════════════════════════════════════${RESET_FORMAT}"
-echo -e "${ORANGE_TEXT}${BOLD_TEXT} 🚀 DR ABHISHEK | GCP VPN CONNECTIVITY LAB AUTOMATION 🚀 ${RESET_FORMAT}"
-echo -e "${ORANGE_TEXT}${BOLD_TEXT}══════════════════════════════════════════════════════════${RESET_FORMAT}"
-echo -e "${CYAN_TEXT}${BOLD_TEXT}📢 Subscribe & Like for more Cloud Labs${RESET_FORMAT}"
-echo
 
 # ================= INPUT =================
-read -p "${YELLOW_TEXT}${BOLD_TEXT}🌍 Enter REGION_1 (example: us-east1): ${RESET_FORMAT}" REGION_1
+read -p "${YELLOW_TEXT}${BOLD_TEXT}🌍 Enter REGION_1 (example: us-wese1): ${RESET_FORMAT}" REGION_1
 read -p "${YELLOW_TEXT}${BOLD_TEXT}🌍 Enter REGION_2 (example: us-central1): ${RESET_FORMAT}" REGION
 
 export REGION_1
