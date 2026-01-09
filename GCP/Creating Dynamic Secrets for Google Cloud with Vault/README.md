@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/GCP/Creating%20Dynamic%20Secrets%20%20for%20Google%20Cloud%20with%20Vault/NikhilVaghela0716.sh
+curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/GCP/Creating%20Dynamic%20Secrets%20for%20Google%20Cloud%20with%20Vault/NikhilVaghela0716.sh
 sudo chmod +x NikhilVaghela0716.sh
 ./NikhilVaghela0716.sh
 ```
