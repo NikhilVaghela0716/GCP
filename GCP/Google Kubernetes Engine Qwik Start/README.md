@@ -1,4 +1,4 @@
-# Cloud Spanner - Database Fundamentals || GSP1048
+# Google Kubernetes Engine: Qwik Start || GSP100
 
 ---
 
