@@ -15,7 +15,7 @@
 ```bash
 curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/GCP/Authentication,%20Authorization,%20and%20Identity%20with%20Vault/NikhilVaghela0716.sh
 sudo chmod +x NikhilVaghela0716.sh
-./NikhilVaghela.sh
+./NikhilVaghela0716.sh
 ```
 
 ---
