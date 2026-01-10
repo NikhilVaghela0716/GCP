@@ -1,4 +1,4 @@
-# Google Kubernetes Engine: Qwik Start || GSP10
+# Google Kubernetes Engine: Qwik Start || GSP100
 
 ---
 
