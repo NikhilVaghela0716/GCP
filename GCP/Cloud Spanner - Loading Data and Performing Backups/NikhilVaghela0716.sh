@@ -147,6 +147,6 @@ echo "${GREEN_TEXT}${BOLD_TEXT}        ✅ LAB COMPLETED SUCCESSFULLY!        ${
 echo "${GOLD_TEXT}${BOLD_TEXT}══════════════════════════════════════════════════${RESET_FORMAT}"
 echo
 echo "${MAGENTA_TEXT}${BOLD_TEXT}📢 Subscribe for more GCP Hands-on Labs${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}${UNDERLINE_TEXT}👉 https://www.youtube.com/@NikhilVaghela${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}${UNDERLINE_TEXT}👉 https://www.youtube.com/@Nikhil-Vaghela0716${RESET_FORMAT}"
 echo
 echo "${CYAN_TEXT}${BOLD_TEXT}🙏 Thanks for learning with Nikhil Vaghela${RESET_FORMAT}"
