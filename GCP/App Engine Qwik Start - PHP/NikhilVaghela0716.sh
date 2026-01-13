@@ -29,7 +29,7 @@ echo "${BLUE_TEXT}${BOLD_TEXT}==================================================
 echo
 echo "${CYAN_TEXT}${BOLD_TEXT}Hands-on Google Cloud • App Engine • PHP Deployment${RESET_FORMAT}"
 echo "${YELLOW_TEXT}📺 Subscribe for more GCP Labs:${RESET_FORMAT}"
-echo "${BLUE_TEXT}${UNDERLINE_TEXT}https://www.youtube.com/@NikhilVaghela${RESET_FORMAT}"
+echo "${BLUE_TEXT}${UNDERLINE_TEXT}https://www.youtube.com/@Nikhil-Vaghela0716${RESET_FORMAT}"
 echo
 
 # =========================
