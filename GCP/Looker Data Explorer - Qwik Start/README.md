@@ -14,13 +14,13 @@
 
 ```bash
 explore: +airports {
-    query: TechCode_1 {
+    query: NikhilVaghela0716_1 {
       measures: [average_elevation]
     }
   }
 
 explore: +airports {
-    query: TechCode_2 {
+    query: NikhilVaghela0716_2 {
       dimensions: [facility_type]
       measures: [average_elevation, count]
     }
