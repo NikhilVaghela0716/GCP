@@ -12,10 +12,10 @@
 
 ## 💻 Run in Cloud Shell:
 
-
-``bash
+```bash
 export BUCKET=
 ```
+
 ```bash
 gsutil web set -m index.html -e error.html gs://$BUCKET && gsutil uniformbucketlevelaccess set off gs://$BUCKET && gsutil defacl set public-read gs://$BUCKET && gsutil acl set -a public-read gs://$BUCKET/index.html && gsutil acl set -a public-read gs://$BUCKET/error.html && gsutil acl set -a public-read gs://$BUCKET/style.css && gsutil acl set -a public-read gs://$BUCKET/logo.jpg
 ```
