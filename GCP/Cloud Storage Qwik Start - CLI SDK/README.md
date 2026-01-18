@@ -12,7 +12,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-export BUCKET=
+export REGION=
 ```
 
 ```bash
