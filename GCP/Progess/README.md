@@ -5,22 +5,11 @@
 
 ```bash
 javascript:(function () {
-    const leaderboard = document.querySelector('.js-lab-leaderboard');
-    const gameLabs = document.querySelector('.games-labs');
+    const removeLearboard = document.querySelector('.js-lab-leaderboard');
+    const showScore = document.querySelector('.games-labs');
 
-    if (leaderboard) {
-        leaderboard.remove();
-    }
-
-    if (gameLabs) {
-        gameLabs.classList.remove('games-labs');
-        gameLabs.classList.add(
-            'lab-show',
-            'l-full',
-            'no-nav',
-            'application-new'
-        );
-    }
+    removeLearboard.remove();
+    showScore.className = "lab-show l-full no-nav application-new lab-show l-full no-nav "
 })();
 ```
 
