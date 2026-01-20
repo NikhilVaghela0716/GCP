@@ -18,15 +18,7 @@ export NEW_BUCKET=
 export REGION=
 ```
 ```bash
-gcloud storage buckets create gs://$NEW_BUCKET --location=$REGION
-gcloud storage buckets add-iam-policy-binding gs://$NEW_BUCKET --member=allUsers --role=roles/storage.objectViewer
-gcloud storage rsync -r gs://$OLD_BUCKET gs://$NEW_BUCKET
-gcloud storage buckets update gs://$NEW_BUCKET --web-main-page-suffix=index.html
-gcloud compute backend-buckets create web-backend --gcs-bucket-name=$NEW_BUCKET
-gcloud compute url-maps create web-map --default-backend-bucket=web-backend
-gcloud compute target-http-proxies create web-proxy --url-map=web-map
-gcloud compute forwarding-rules create web-rule --load-balancing-scheme=EXTERNAL --target-http-proxy=web-proxy --ports=80 --global
-gcloud compute forwarding-rules list
+gsutil mb -l $REGION gs://$NEW_BUCKET && gsutil rsync -r gs://$OLD_BUCKET gs://$NEW_BUCKET && gsutil iam ch allUsers:objectViewer gs://$NEW_BUCKET && gsutil web set -m index.html -e 404.html gs://$NEW_BUCKET && gcloud compute backend-buckets create web-backend --gcs-bucket-name=$NEW_BUCKET && gcloud compute url-maps create web-map --default-backend-bucket=web-backend && gcloud compute target-http-proxies create http-lb-proxy --url-map=web-map && gcloud compute forwarding-rules create http-content-rule --global --target-http-proxy=http-lb-proxy --ports=80 && gcloud compute forwarding-rules list
 ```
 
 ---
