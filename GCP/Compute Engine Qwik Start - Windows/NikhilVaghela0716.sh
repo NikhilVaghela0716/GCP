@@ -36,8 +36,8 @@ echo "${CYAN_TEXT}${BOLD_TEXT}Step 2:${RESET_FORMAT} ${WHITE_TEXT}Fetching the d
 export ZONE=$(gcloud compute project-info describe --format="value(commonInstanceMetadata.items[google-compute-default-zone])")
 
 # Instruction to create the instance
-echo "${CYAN_TEXT}${BOLD_TEXT}Step 3:${RESET_FORMAT} ${WHITE_TEXT}Creating a new Compute Engine instance named 'arcadecrew'.${RESET_FORMAT}"
-gcloud compute instances create arcadecrew --project=$DEVSHELL_PROJECT_ID --zone $ZONE --machine-type=e2-medium --create-disk=auto-delete=yes,boot=yes,device-name=arcadecrew,image=projects/windows-cloud/global/images/windows-server-2022-dc-v20230913,mode=rw,size=50,type=projects/$DEVSHELL_PROJECT_ID/zones/$ZONE/diskTypes/pd-balanced 
+echo "${CYAN_TEXT}${BOLD_TEXT}Step 3:${RESET_FORMAT} ${WHITE_TEXT}Creating a new Compute Engine instance named 'subscribe'.${RESET_FORMAT}"
+gcloud compute instances create subscribe --project=$DEVSHELL_PROJECT_ID --zone $ZONE --machine-type=e2-medium --create-disk=auto-delete=yes,boot=yes,device-name=subscribe,image=projects/windows-cloud/global/images/windows-server-2022-dc-v20230913,mode=rw,size=50,type=projects/$DEVSHELL_PROJECT_ID/zones/$ZONE/diskTypes/pd-balanced 
 
 # Instruction to wait for the instance to initialize
 echo "${YELLOW_TEXT}${BOLD_TEXT}Please wait for 30 seconds while the instance initializes...${RESET_FORMAT}"
@@ -45,11 +45,11 @@ sleep 30
 
 # Instruction to get serial port output
 echo "${CYAN_TEXT}${BOLD_TEXT}Step 4:${RESET_FORMAT} ${WHITE_TEXT}Fetching the serial port output of the instance.${RESET_FORMAT}"
-gcloud compute instances get-serial-port-output arcadecrew --zone=$ZONE
+gcloud compute instances get-serial-port-output subscribe --zone=$ZONE
 
 # Instruction to reset the Windows password
 echo "${CYAN_TEXT}${BOLD_TEXT}Step 5:${RESET_FORMAT} ${WHITE_TEXT}Resetting the Windows password for the 'admin' user.${RESET_FORMAT}"
-gcloud compute reset-windows-password arcadecrew --zone $ZONE --user admin --quiet
+gcloud compute reset-windows-password subscribe --zone $ZONE --user admin --quiet
 
 echo
 echo "${GREEN_TEXT}${BOLD_TEXT}=======================================================${RESET_FORMAT}"
