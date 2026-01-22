@@ -1,5 +1,4 @@
-# 🌐 Filtering Explores with LookML | GSP892 🚀
-
+# 🌐 Caching and Datagroups with LookML | GSP893
 
 ## ⚠️ Disclaimer ⚠️
 
@@ -7,9 +6,10 @@
 >
 > **Terms Compliance:** Always ensure compliance with Qwiklabs' terms of service and YouTube's community guidelines. The aim is to enhance your learning experience — not to circumvent it.
 
+
 ---
 
-## `Update training_ecommerce.model:`
+## Update `training_ecommerce.model:`
 
 ```bash
 connection: "bigquery_public_data_looker"
@@ -19,19 +19,15 @@ include: "/views/*.view"
 include: "/z_tests/*.lkml"
 include: "/**/*.dashboard"
 
-datagroup: training_ecommerce_default_datagroup {
-  # sql_trigger: SELECT MAX(id) FROM etl_log;;
+datagroup: order_items_datagroup {
+  sql_trigger: SELECT MAX(order_item_id) from order_items ;;
   max_cache_age: "1 hour"
 }
-
-persist_with: training_ecommerce_default_datagroup
 
 label: "E-Commerce Training"
 
 explore: order_items {
-  conditionally_filter: {filters: [created_date: "3 years"]
-
-  unless: [users.id, users.state]}
+  persist_with: order_items_datagroup
   join: users {
     type: left_outer
     sql_on: ${order_items.user_id} = ${users.id} ;;
@@ -74,6 +70,7 @@ explore: events {
     relationship: many_to_one
   }
 }
+
 ```
 
 ---
