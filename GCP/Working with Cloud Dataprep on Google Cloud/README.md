@@ -10,7 +10,7 @@
 
 ---
 
-## Download 👉[Here](https://drive.usercontent.google.com/u/0/uc?id=1FkrERuO1vmQDdQyUvQnv8wAagng8tRvR&export=download)
+## Download : [Here](https://drive.usercontent.google.com/u/0/uc?id=1FkrERuO1vmQDdQyUvQnv8wAagng8tRvR&export=download)
 
 
 ---
