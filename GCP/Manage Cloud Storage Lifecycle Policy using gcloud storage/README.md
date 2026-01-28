@@ -14,7 +14,11 @@
 
 ```bash
 curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/GCP/Manage%20Cloud%20Storage%20Lifecycle%20Policy%20using%20gcloud%20storage/NikhilVaghela0716.sh
+```
+```bash
 sudo chmod +x NikhilVaghela0716.sh
+```
+```bash
 ./NikhilVaghela0716.sh
 ```
 
