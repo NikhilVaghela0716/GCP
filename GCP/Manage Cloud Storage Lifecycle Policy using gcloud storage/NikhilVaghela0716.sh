@@ -54,3 +54,5 @@ cat > "$LIFECYCLE_FILE" <<'JSON'
 JSON
 
 gsutil lifecycle set "$LIFECYCLE_FILE" "$BUCKET_NAME"
+
+echo "Done"
