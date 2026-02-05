@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO https://github.com/NikhilVaghela0716/GCP/blob/main/APIs%20Explorer%20Create%20and%20Update%20a%20Cluster
+curl -LO https://github.com/NikhilVaghela0716/GCP/blob/main/APIs%20Explorer%20Create%20and%20Update%20a%20Cluster/NikhilVaghela0716.sh
 sudo chmod +x NikhilVaghela0716.sh
 ./NikhilVaghela0716.sh
 #arre bhai kehna kya chate ho ?😁
