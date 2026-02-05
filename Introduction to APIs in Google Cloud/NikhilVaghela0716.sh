@@ -174,7 +174,7 @@ fi
 # ====================================================
 echo
 echo "${RED_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}         ✅ LAB COMPLETED SUCCESSFULLY!                       ${RESET_FORMAT}"
+echo "${RED_TEXT}${BOLD_TEXT}                 ✅ LAB COMPLETED SUCCESSFULLY!               ${RESET_FORMAT}"
 echo "${RED_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
 echo
 echo "${BLUE_TEXT}${BOLD_TEXT}🙏 Thanks for learning with Nikhil Vaghela${RESET_FORMAT}"
