@@ -1,4 +1,4 @@
-# 🌏 Introduction to APIs in Google Cloud | GSP294
+# 🌏 Google Cloud Storage - Bucket Lock | GSP297
 
 ---
 
