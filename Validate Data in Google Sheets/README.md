@@ -13,7 +13,7 @@
 
 ## 💻 Download:
 
-* **[📥 Download (https://docs.google.com/spreadsheets/d/14okG2dGzZrscMPvzRoONoL9TmE5K1obB/export?format=xlsx)**
+* **[📥 Download ](https://docs.google.com/spreadsheets/d/14okG2dGzZrscMPvzRoONoL9TmE5K1obB/export?format=xlsx)**
 ---
 
 ## 🎉 Congratulations! Lab Completed Successfully! 🏆
