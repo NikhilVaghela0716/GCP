@@ -1,4 +1,4 @@
-# 🥳APIs Explorer: Create and Update a Cluster | GSP288
+# 🌏Networking%20101 | GSP016
 
 ---
 
@@ -12,6 +12,11 @@
 
 ## 💻 Run in Cloud Shell:
 
+```bash
+export REGION_1=
+export REGION_2=
+export REGION_3=
+```
 ```bash
 curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Networking%20101/NikhilVaghela0716.sh
 sudo chmod +x NikhilVaghela0716.sh
