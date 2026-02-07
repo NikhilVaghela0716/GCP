@@ -1,4 +1,4 @@
-# 🌏Networking%20101 | GSP016
+# 🌏Networking 101 | GSP016
 
 ---
 
