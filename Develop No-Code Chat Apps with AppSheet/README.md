@@ -1,4 +1,4 @@
-# 🚀 Use Charts in Google Sheets | GSP1061
+# 🚀 Develop No-Code Chat Apps with AppSheet | GSP1146
 
 ---
 
