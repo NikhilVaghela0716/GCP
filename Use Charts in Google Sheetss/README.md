@@ -14,7 +14,7 @@
 ## 💻 Download:
 
 * **[📥 Download Lab Spreadsheet (Excel)](https://docs.google.com/spreadsheets/d/1c4NmutA6mejtKH26lEi0r7lwjUCbRZ9q/export?format=xlsx)**
-* **[📥 Download Lab Presentation (PowerPoint)](https://docs.google.com/presentation/d/10JUbQStxTwYS1fthce5Qo6ORKi1mrZya/export/pptx)**
+
 
 ---
 
