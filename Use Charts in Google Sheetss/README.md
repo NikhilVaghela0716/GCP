@@ -22,6 +22,10 @@
 
 ## 📊 Google Sheets Formulas & Data
 
+### Chart `Title`
+```excel
+Locations by Continent
+```
 ### Cell `B2`
 ```excel
 =SPARKLINE(C2:N2)
