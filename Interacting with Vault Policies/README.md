@@ -27,16 +27,7 @@ export VAULT_ADDR='http://127.0.0.1:8200'
 vault login token=<your root token>
 ```
 
-```bash
-vault auth enable userpass && vault write auth/userpass/users/example-user password='password!'
-```
 
-```bash
-vault login -method=userpass username=example-user password=password!
-```
-```bash
-vault login -method=userpass username=example-user password=password!
-```
 
 ### `Follow Video`
 
