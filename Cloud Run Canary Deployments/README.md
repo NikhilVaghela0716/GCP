@@ -26,12 +26,7 @@ sudo chmod +x NikhilVaghela02.sh
 ./NikhilVaghela02.sh
 
 ```
----
-```bash
-curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Cloud%20Run%20Canary%20Deployments/NikhilVaghela03.sh
-sudo chmod +x NikhilVaghela03.sh
-./NikhilVaghela03.sh
-```
+
 
 
 ---
