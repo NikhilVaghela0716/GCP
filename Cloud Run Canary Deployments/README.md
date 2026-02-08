@@ -12,13 +12,6 @@
 
 ## 💻 Run in Cloud Shell:
 
-```bash
-curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/APIs%20Explorer%20Create%20and%20Update%20a%20Cluster/NikhilVaghela01.sh
-sudo chmod +x NikhilVaghela01.sh
-./NikhilVaghela01.sh
-#arre bhai kehna kya chate ho ?😁
-```
-
 ---
 
 ```bash
