@@ -20,6 +20,8 @@ sudo chmod +x NikhilVaghela01.sh
 ./NikhilVaghela01.sh
 ```
 ---
+### `Follow Video Carefully`
+---
 ```bash
 curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Cloud%20Run%20Canary%20Deployments/NikhilVaghela02.sh
 sudo chmod +x NikhilVaghela02.sh
