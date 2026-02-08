@@ -12,7 +12,7 @@ RESET=$(tput sgr0)
 # ====================================================
 clear
 echo "${BLUE}${BOLD}==================================================================${RESET}"
-echo "${BLUE}${BOLD}           GOOGLE CLOUD REST API LAB | EXECUTION STARTED          ${RESET}"
+echo "${BLUE}${BOLD}                GOOGLE CLOUD LAB | EXECUTION STARTED              ${RESET}"
 echo "${BLUE}${BOLD}==================================================================${RESET}"
 echo
 
