@@ -10,7 +10,7 @@
 
 ---
 
-### `1`
+### `1 : Follow the video for a full score. Don’t run it directly without watching the video, or you may miss the full score`
 ```bash
 export PROJECT_ID=$(gcloud config get-value project)
 export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
@@ -46,7 +46,7 @@ echo ${USER_EMAIL}
 
 ```
 
-### `2`
+### `2 : Follow the video for a full score. Don’t run it directly without watching the video, or you may miss the full score`
 ```bash
 
 gh repo create cloudrun-progression --private 
@@ -95,7 +95,7 @@ gcloud builds connections describe cloud-build-connection --region=$REGION
 
 ```
 
-### `3`
+### `3 : Follow the video for a full score. Don’t run it directly without watching the video, or you may miss the full score`
 ```bash
 
 gcloud builds repositories create cloudrun-progression \
