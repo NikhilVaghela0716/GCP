@@ -17,20 +17,6 @@ curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Analyze%20
 sudo chmod +x NikhilVaghela0716.sh
 ./NikhilVaghela0716.sh
 ```
-```bash
-[   
-  {
-    "mode": "NULLABLE",
-    "name": "resource",
-    "type": "JSON"
-  },   
-  {
-    "mode": "NULLABLE",
-    "name": "finding",
-    "type": "JSON"
-  }
-]
-```
 ---
 
 ## 🎉 Congratulations! Lab Completed Successfully! 🏆
