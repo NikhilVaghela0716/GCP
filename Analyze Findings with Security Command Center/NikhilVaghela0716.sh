@@ -191,7 +191,11 @@ echo "${RED_TEXT}${BOLD_TEXT}===================================================
 echo "${RED_TEXT}${BOLD_TEXT}                LAB COMPLETED SUCCESSFULLY!                   ${RESET_FORMAT}"
 echo "${RED_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
 echo
-
+echo "${BLUE_TEXT}${BOLD_TEXT}Next Steps:${RESET_FORMAT}"
+echo "${BLUE_TEXT}1. BigQuery: https://console.cloud.google.com/bigquery?project=${PROJECT_ID}${RESET_FORMAT}"
+echo "${BLUE_TEXT}2. Storage: https://console.cloud.google.com/storage/browser/${BUCKET_NAME}?project=${PROJECT_ID}${RESET_FORMAT}"
+echo "${BLUE_TEXT}3. SCC Console: https://console.cloud.google.com/security/command-center/findings?project=${PROJECT_ID}${RESET_FORMAT}"
+echo
 echo
 echo "${BLUE_TEXT}${BOLD_TEXT}🙏 Thanks for learning with Nikhil Vaghela${RESET_FORMAT}"
 echo "${RED_TEXT}${BOLD_TEXT}📢 Subscribe for more Google Cloud Labs:${RESET_FORMAT}"
