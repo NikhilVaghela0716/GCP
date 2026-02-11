@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Using%20Specialized%20Processors%20with%20Document%20AI%20(Python)/NikhilVaghela0716.sh
+curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Using%20Specialized%20Processors%20with%20Document%20AI%20(Python)/NikhilVaghela0716.sh"
 sudo chmod +x NikhilVaghela0716.sh
 ./NikhilVaghela0716.sh
 ```
