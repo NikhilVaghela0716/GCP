@@ -91,9 +91,8 @@ echo
 echo "${BLUE_TEXT}${BOLD_TEXT}Create an export sink:${RESET_FORMAT} https://console.cloud.google.com/logs/query?project=$DEVSHELL_PROJECT_ID"
 echo
 
-# ------------------------------------------------------
-echo "${RED_TEXT}${BOLD_TEXT}👉 Asking user to continue...${RESET_FORMAT}"
-# ------------------------------------------------------
+
+echo "${RED_TEXT}${BOLD_TEXT}Asking user to continue ${RESET_FORMAT}"
 while true; do
     echo -ne "${BLUE_TEXT}${BOLD_TEXT}Do you Want to proceed? (Y/n): ${RESET_FORMAT}"
     read confirm
@@ -112,7 +111,7 @@ while true; do
     esac
 done
 
-echo "${RED_TEXT}${BOLD_TEXT}👉 Generating more sample traffic 100 requests${RESET_FORMAT}"
+echo "${RED_TEXT}${BOLD_TEXT}Generating more sample traffic 100 requests${RESET_FORMAT}"
 CP_IP=$(gcloud compute instances describe web-server --zone=$ZONE --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
 export MY_SERVER=$CP_IP
 for ((i=1;i<=100;i++)); do curl $MY_SERVER; done
