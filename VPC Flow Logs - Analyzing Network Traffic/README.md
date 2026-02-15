@@ -18,10 +18,8 @@ sudo chmod +x NikhilVaghela0716.sh
 ./NikhilVaghela0716.sh
 ```
 
-### `vpc-flows`
 ```bash
-export ZONE=$(gcloud compute instances list --filter="name=centos-clean" --format="value(zone)")
-gcloud compute ssh centos-clean --zone=$ZONE --quiet
+vpc-flows
 ```
 
 ---
