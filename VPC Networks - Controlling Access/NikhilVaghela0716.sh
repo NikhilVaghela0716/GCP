@@ -3,27 +3,60 @@
 # ==========================================
 # ONLY BLUE & RED COLORS
 # ==========================================
-RED=`tput setaf 1`
-BLUE=`tput setaf 4`
-BOLD=`tput bold`
-RESET=`tput sgr0`
+RED=$(tput setaf 1)
+BLUE=$(tput setaf 4)
+BOLD=$(tput bold)
+RESET=$(tput sgr0)
+
 # =========================
 # WELCOME MESSAGE
 # =========================
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}              🚀 GOOGLE CLOUD LAB | NIKHIL VAGHELA 🚀            ${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
+# FIX: Used correct variable names (e.g., $BLUE instead of $BLUE_TEXT)
+echo "${BLUE}${BOLD}==================================================================${RESET}"
+echo "${BLUE}${BOLD}              🚀 GOOGLE CLOUD LAB | NIKHIL VAGHELA 🚀            ${RESET}"
+echo "${BLUE}${BOLD}==================================================================${RESET}"
 echo
-
 
 # Ask for zone input
 read -p "${BLUE}${BOLD}Please enter the zone value to export: ${RESET}" ZONE
 export ZONE
 
 # Create instances
-gcloud compute instances create blue --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --machine-type=e2-medium --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --metadata=enable-oslogin=true --maintenance-policy=MIGRATE --provisioning-model=STANDARD --tags=web-server,http-server --create-disk=auto-delete=yes,boot=yes,device-name=blue,image=projects/debian-cloud/global/images/debian-11-bullseye-v20230509,mode=rw,size=10,type=projects/$DEVSHELL_PROJECT_ID/zones/$ZONE/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ec-src=vm_add-gcloud --reservation-affinity=any
+# BLUE INSTANCE
+gcloud compute instances create blue \
+    --project=$DEVSHELL_PROJECT_ID \
+    --zone=$ZONE \
+    --machine-type=e2-medium \
+    --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default \
+    --metadata=enable-oslogin=true \
+    --maintenance-policy=MIGRATE \
+    --provisioning-model=STANDARD \
+    --tags=web-server,http-server \
+    --create-disk=auto-delete=yes,boot=yes,device-name=blue,image=projects/debian-cloud/global/images/debian-11-bullseye-v20230509,mode=rw,size=10,type=projects/$DEVSHELL_PROJECT_ID/zones/$ZONE/diskTypes/pd-balanced \
+    --no-shielded-secure-boot \
+    --shielded-vtpm \
+    --shielded-integrity-monitoring \
+    --labels=goog-ec-src=vm_add-gcloud \
+    --reservation-affinity=any
 
-gcloud compute instances create green --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --machine-type=e2-medium --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --metadata=enable-oslogin=true --maintenance-policy=MIGRATE --provisioning-model=STANDARD --create-disk=auto-delete=yes,boot=yes,device-name=blue,image=projects/debian-cloud/global/images/debian-11-bullseye-v20230509,mode=rw,size=10,type=projects/$DEVSHELL_PROJECT_ID/zones/$ZONE/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ec-src=vm_add-gcloud --reservation-affinity=any
+# GREEN INSTANCE
+# FIX: Added --tags=web-server,http-server so the firewall rule applies
+# FIX: Changed device-name to green
+gcloud compute instances create green \
+    --project=$DEVSHELL_PROJECT_ID \
+    --zone=$ZONE \
+    --machine-type=e2-medium \
+    --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default \
+    --metadata=enable-oslogin=true \
+    --maintenance-policy=MIGRATE \
+    --provisioning-model=STANDARD \
+    --tags=web-server,http-server \
+    --create-disk=auto-delete=yes,boot=yes,device-name=green,image=projects/debian-cloud/global/images/debian-11-bullseye-v20230509,mode=rw,size=10,type=projects/$DEVSHELL_PROJECT_ID/zones/$ZONE/diskTypes/pd-balanced \
+    --no-shielded-secure-boot \
+    --shielded-vtpm \
+    --shielded-integrity-monitoring \
+    --labels=goog-ec-src=vm_add-gcloud \
+    --reservation-affinity=any
 
 # Create firewall rule
 gcloud compute --project=$DEVSHELL_PROJECT_ID firewall-rules create allow-http-web-server --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:80,icmp --source-ranges=0.0.0.0/0 --target-tags=web-server
@@ -60,13 +93,14 @@ gcloud compute ssh green --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet --c
 # COMPLETION FOOTER
 # =========================
 echo
-echo "${RED_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}                ✅ LAB COMPLETED SUCCESSFULLY!                ${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
+echo "${RED}${BOLD}==============================================================${RESET}"
+echo "${RED}${BOLD}                ✅ LAB COMPLETED SUCCESSFULLY!                ${RESET}"
+echo "${RED}${BOLD}==============================================================${RESET}"
 echo
-echo "${BLUE_TEXT}${BOLD_TEXT}🙏 Thanks for learning with Nikhil Vaghela${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}📢 Subscribe for more Google Cloud Labs:${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}${UNDERLINE_TEXT}https://www.youtube.com/@Nikhil-Vaghela0716${RESET_FORMAT}"
+echo "${BLUE}${BOLD}🙏 Thanks for learning with Nikhil Vaghela${RESET}"
+echo "${RED}${BOLD}📢 Subscribe for more Google Cloud Labs:${RESET}"
+# Note: You didn't define UNDERLINE_TEXT, so I removed it to prevent errors, or you can use `tput smul`
+echo "${BLUE}${BOLD}https://www.youtube.com/@Nikhil-Vaghela0716${RESET}"
 echo
 
 rm -f bluessh.sh greenssh.sh
