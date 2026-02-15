@@ -1,23 +1,8 @@
 #!/bin/bash
-# Define color variables
+# Define color variables (ONLY RED & BLUE)
 
-BLACK=`tput setaf 0`
 RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-YELLOW=`tput setaf 3`
 BLUE=`tput setaf 4`
-MAGENTA=`tput setaf 5`
-CYAN=`tput setaf 6`
-WHITE=`tput setaf 7`
-
-BG_BLACK=`tput setab 0`
-BG_RED=`tput setab 1`
-BG_GREEN=`tput setab 2`
-BG_YELLOW=`tput setab 3`
-BG_BLUE=`tput setab 4`
-BG_MAGENTA=`tput setab 5`
-BG_CYAN=`tput setab 6`
-BG_WHITE=`tput setab 7`
 
 BOLD=`tput bold`
 RESET=`tput sgr0`
@@ -30,8 +15,9 @@ echo "${BLUE}${BOLD}============================================================
 echo "${BLUE}${BOLD}              🚀 GOOGLE CLOUD LAB | NIKHIL VAGHELA 🚀            ${RESET}"
 echo "${BLUE}${BOLD}==================================================================${RESET}"
 echo
+
 # Ask for zone input
-echo "${YELLOW}${BOLD}Please enter the zone value to export (e.g., us-central1-a):${RESET}"
+echo "${RED}${BOLD}Please enter the zone value to export :${RESET}"
 read ZONE
 export ZONE
 
@@ -71,7 +57,7 @@ EOF_END
 gcloud compute scp greenssh.sh green:/tmp --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet
 gcloud compute ssh green --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet --command="bash /tmp/greenssh.sh"
 
-echo "${BG_GREEN}${BLACK}${BOLD}Congratulations For Completing The Lab !!!${RESET}"
+echo "${BLUE}${BOLD}Congratulations For Completing The Lab !!!${RESET}"
 
 echo
 echo "${RED}${BOLD}==============================================================${RESET}"
@@ -82,7 +68,6 @@ echo "${BLUE}${BOLD}🙏 Thanks for learning with Nikhil Vaghela${RESET}"
 echo "${RED}${BOLD}📢 Subscribe for more Google Cloud Labs:${RESET}"
 echo "${BLUE}${BOLD}https://www.youtube.com/@Nikhil-Vaghela0716${RESET}"
 echo
-
 
 # Clean up temporary files
 rm -f bluessh.sh greenssh.sh
