@@ -13,10 +13,8 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-PROJECT_ID=$(gcloud config get-value project)
-BUCKET_NAME="gs://${PROJECT_ID}-bucket"
-echo '[{"origin":["http://example.com"],"method":["GET"],"responseHeader":["Content-Type"],"maxAgeSeconds":3600}]' > cors.json
-gcloud storage buckets update "$BUCKET_NAME" --cors-file=cors.json
+PROJECT_ID=$(gcloud config get-value project) && BUCKET_NAME="gs://${PROJECT_ID}-bucket" && echo '[{"origin":["http://example.com"],"method":["GET"],"responseHeader":["Content-Type"],"maxAgeSeconds":3600}]' > cors.json && gcloud storage buckets update "$BUCKET_NAME" --cors-file=cors.json
+
 ```
 
 ---
