@@ -1,0 +1,36 @@
+# 🌏Create Custom VPC with Subnets ConfigurationAPIs Explorer: Create and Update a Cluster
+
+---
+
+## ⚠️ Disclaimer ⚠️
+
+> **Educational Purpose Only:** This script and guide are provided for educational purposes to help you understand the lab services and boost your career. Before using the script, please open and review it to familiarize yourself with Google Cloud services.
+>
+> **Terms Compliance:** Always ensure compliance with Qwiklabs' terms of service and YouTube's community guidelines. The aim is to enhance your learning experience — not to circumvent it.
+
+---
+
+## 💻 Run in Cloud Shell:
+
+```bash
+gcloud compute firewall-rules list --filter="network=default" \
+--format="value(name)" | while read rule; do \
+  gcloud compute firewall-rules delete "$rule" --quiet; \
+done; \
+gcloud compute networks delete default --quiet; \
+gcloud compute networks create custom-vpc --subnet-mode=custom; \
+gcloud compute networks subnets create custom-subnet-us --network=custom-vpc --region=us-central1 --range=10.0.1.0/24; \
+gcloud compute networks subnets create custom-subnet-asia --network=custom-vpc --region=asia-southeast1 --range=10.0.2.0/24
+```
+
+---
+
+## 🎉 Congratulations! Lab Completed Successfully! 🏆
+
+---
+
+## 📺 Subscribe for More!
+
+| [![Nikhil Vaghela](https://img.shields.io/badge/YouTube-Nikhil%20Vaghela-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/@Nikhil-Vaghela0716) |
+|:--:|
+| **Don't forget to Like 👍, Share 📤, and Subscribe 🔔!** |
