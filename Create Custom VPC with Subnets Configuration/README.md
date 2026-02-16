@@ -1,4 +1,4 @@
-# 🌏Create Custom VPC with Subnets ConfigurationAPIs Explorer: Create and Update a Cluster
+# 🌏Create Custom VPC with Subnets Configuration
 
 ---
 
