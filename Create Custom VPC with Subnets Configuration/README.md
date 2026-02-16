@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-gcloud compute firewall-rules list --filter="network=default" --format="value(name)" | xargs -r gcloud compute firewall-rules delete -q; gcloud compute networks delete default -q; gcloud compute networks delete custom-vpc -q; gcloud compute networks create custom-vpc --subnet-mode=custom -q && gcloud compute networks subnets create subnet-us --network=custom-vpc --region=us-central1 --range=10.0.1.0/24 -q && gcloud compute networks subnets create subnet-asia --network=custom-vpc --region=asia-southeast1 --range=10.0.2.0/24 -q
+export REGION=$(gcloud compute project-info describe --format="value(commonInstanceMetadata.items.google-compute-default-region)") && echo "Using Region: $REGION" && gcloud compute firewall-rules list --filter="network=default" --format="value(name)" | xargs -r gcloud compute firewall-rules delete -q; gcloud compute networks delete default -q; gcloud compute networks delete custom-vpc -q; gcloud compute networks create custom-vpc --subnet-mode=custom -q && gcloud compute networks subnets create subnet-asia --network=custom-vpc --region=asia-southeast1 --range=10.0.2.0/24 -q && gcloud compute networks subnets create subnet-us --network=custom-vpc --region=$REGION --range=10.0.1.0/24 -q
 ```
 
 ---
