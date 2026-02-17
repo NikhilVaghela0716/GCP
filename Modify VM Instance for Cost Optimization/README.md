@@ -17,7 +17,7 @@ These resources are meant to **enhance learning and understanding** and must not
 ## 💻 Run in Cloud Shell:
 
 ```bash
-gcloud compute instances stop Instance_name --zone=YOUR_ZONE && gcloud compute instances set-machine-type Instance_name --zone=YOUR_ZONE --machine-type=e2-medium && gcloud compute instances start Instance_name --zone=YOUR_ZONE
+INSTANCE=$(gcloud compute instances list --format="value(name)" | head -n 1) && ZONE=$(gcloud compute instances list --format="value(zone)" | head -n 1 | awk -F/ '{print $NF}') && gcloud compute instances stop $INSTANCE --zone=$ZONE && gcloud compute instances set-machine-type $INSTANCE --zone=$ZONE --machine-type=e2-medium && gcloud compute instances start [Instance_name] --zone=[YOUR_ZONE]
 ```
 
 ---
