@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main//KenilithCloudx.sh
+curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Rate%20Limiting%20with%20Cloud%20Armor/KenilithCloudx.sh
 sudo chmod +x KenilithCloudx.sh
 ./KenilithCloudx.sh
 ```
