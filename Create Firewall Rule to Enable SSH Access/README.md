@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-gcloud compute firewall-rules create allow-ssh --network=$(gcloud compute networks list --filter="name!=default" --format="value(name)") --allow=tcp:22 --source-ranges=0.0.0.0/0
+gcloud compute firewall-rules create allow-ssh --network="$(gcloud compute instances describe "$(gcloud compute instances list --format='value(name)' --limit=1)" --zone="$(gcloud compute instances list --format='value(zone)' --limit=1)" --format='value(networkInterfaces[0].network.basename())')" --allow=tcp:22 --source-ranges=0.0.0.0/0 --target-tags=http-server
 ```
 
 ---
