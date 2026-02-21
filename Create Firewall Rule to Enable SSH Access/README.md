@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-gcloud compute firewall-rules create allow-ssh --network=$(gcloud compute networks list --format="value(name)" --limit=1) --allow=tcp:22 --direction=INGRESS --source-ranges=0.0.0.0/0
+gcloud compute firewall-rules create allow-ssh --network=$(gcloud compute networks list --filter="name!=default" --format="value(name)") --allow=tcp:22 --source-ranges=0.0.0.0/0
 ```
 
 ---
