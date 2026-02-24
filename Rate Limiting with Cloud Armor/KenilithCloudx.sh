@@ -10,7 +10,7 @@ clear
 # WELCOME MESSAGE
 # =========================
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}              🚀 GOOGLE CLOUD LAB | NIKHIL VAGHELA 🚀            ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}              🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀           ${RESET_FORMAT}"
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
 read -p "ENTER REGION_1: " REGION1
