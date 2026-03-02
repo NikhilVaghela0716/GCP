@@ -1,4 +1,4 @@
-# 🐳 Creating and Alerting on Logs-based Metrics || GSP091
+# 🐳 Creating and Alerting on Logs-based Metrics | GSP091
 
 ---
 
