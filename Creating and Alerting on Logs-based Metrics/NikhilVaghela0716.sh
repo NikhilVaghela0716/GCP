@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =========================
-# COLOR DEFINITIONS (ONLY RED & BLUE)
+# COLOR VARIABLES (ONLY RED & BLUE)
 # =========================
 RED_TEXT=$'\033[0;91m'
 BLUE_TEXT=$'\033[0;94m'
@@ -42,7 +42,7 @@ gcloud logging metrics create stopped-vm \
 
 # Step 4: Create Pub/Sub notification channel config file
 echo "${RED_TEXT}${BOLD_TEXT}Creating Pub/Sub notification channel config file${RESET_FORMAT}"
-cat > pubsub-channel.json <<EOF
+cat > pubsub-channel.json <<EOF_END
 {
   "type": "pubsub",
   "displayName": "awesome",
@@ -51,7 +51,7 @@ cat > pubsub-channel.json <<EOF
     "topic": "projects/$DEVSHELL_PROJECT_ID/topics/notificationTopic"
   }
 }
-EOF
+EOF_END
 
 # Step 5: Create the Pub/Sub notification channel
 echo "${RED_TEXT}${BOLD_TEXT}Creating Pub/Sub notification channel${RESET_FORMAT}"
@@ -64,13 +64,14 @@ email_channel_id=$(echo "$email_channel_info" | grep -oP 'name: \K[^ ]+' | head 
 
 # Step 7: Create Alert Policy for Stopped VMs
 echo "${RED_TEXT}${BOLD_TEXT}Creating alert policy for stopped VMs${RESET_FORMAT}"
-cat > stopped-vm-alert-policy.json <<EOF
+cat > stopped-vm-alert-policy.json <<EOF_END
 {
   "displayName": "stopped vm",
   "documentation": {
     "content": "Documentation content for the stopped vm alert policy",
     "mime_type": "text/markdown"
   },
+  "userLabels": {},
   "conditions": [
     {
       "displayName": "Log match condition",
@@ -87,7 +88,7 @@ cat > stopped-vm-alert-policy.json <<EOF
   "enabled": true,
   "notificationChannels": ["$email_channel_id"]
 }
-EOF
+EOF_END
 
 # Step 8: Deploy Alert Policy
 echo "${RED_TEXT}${BOLD_TEXT}Deploying alert policy for stopped VMs${RESET_FORMAT}"
@@ -95,10 +96,8 @@ gcloud alpha monitoring policies create --policy-from-file=stopped-vm-alert-poli
 
 # Step 9: Create Artifact Registry
 echo "${RED_TEXT}${BOLD_TEXT}Creating Docker Artifact Registry${RESET_FORMAT}"
-gcloud artifacts repositories create docker-repo \
---repository-format=docker \
---location=$REGION \
---description="Docker repository" \
+gcloud artifacts repositories create docker-repo --repository-format=docker \
+--location=$REGION --description="Docker repository" \
 --project=$DEVSHELL_PROJECT_ID
 
 # Step 10: Download and Load Docker Image
@@ -113,6 +112,8 @@ docker tag gcr.io/ops-demo-330920/flask_telemetry:61a2a7aabc7077ef474eb24f4b69fa
 $REGION-docker.pkg.dev/$DEVSHELL_PROJECT_ID/docker-repo/flask-telemetry:v1
 
 docker push $REGION-docker.pkg.dev/$DEVSHELL_PROJECT_ID/docker-repo/flask-telemetry:v1
+
+gcloud container clusters list
 
 # Step 12: Get Cluster Credentials
 echo "${RED_TEXT}${BOLD_TEXT}Getting Kubernetes cluster credentials${RESET_FORMAT}"
@@ -129,11 +130,11 @@ unzip gmp_prom_setup.zip
 cd gmp_prom_setup
 
 # Step 15: Update Deployment with Docker Image
-echo "${RED_TEXT}${BOLD_TEXT}Updating deployment manifest${RESET_FORMAT}"
+echo "${RED_TEXT}${BOLD_TEXT}Updating deployment manifest with Docker image URL${RESET_FORMAT}"
 sed -i "s|<ARTIFACT REGISTRY IMAGE NAME>|$REGION-docker.pkg.dev/$DEVSHELL_PROJECT_ID/docker-repo/flask-telemetry:v1|g" flask_deployment.yaml
 
 # Step 16: Apply Kubernetes Resources
-echo "${RED_TEXT}${BOLD_TEXT}Applying Kubernetes resources${RESET_FORMAT}"
+echo "${RED_TEXT}${BOLD_TEXT}Applying Kubernetes deployment and service${RESET_FORMAT}"
 kubectl -n gmp-test apply -f flask_deployment.yaml
 kubectl -n gmp-test apply -f flask_service.yaml
 
@@ -145,22 +146,45 @@ kubectl get services -n gmp-test
 echo "${RED_TEXT}${BOLD_TEXT}Creating log-based metric for hello-app errors${RESET_FORMAT}"
 gcloud logging metrics create hello-app-error \
 --description="Metric for hello-app errors" \
---log-filter='severity=ERROR resource.labels.container_name="hello-app" textPayload:"ERROR: 404 Error page not found"'
+--log-filter='severity=ERROR
+resource.labels.container_name="hello-app"
+textPayload: "ERROR: 404 Error page not found"'
 
 sleep 30
 
-# Step 19: Create Alert Policy
+# Step 19: Create Alert Policy for hello-app Errors
 echo "${RED_TEXT}${BOLD_TEXT}Creating alert policy for hello-app errors${RESET_FORMAT}"
+cat > awesome.json <<'EOF_END'
+{
+  "displayName": "log based metric alert",
+  "conditions": [
+    {
+      "displayName": "New condition",
+      "conditionThreshold": {
+        "filter": "metric.type=\"logging.googleapis.com/user/hello-app-error\" AND resource.type=\"global\"",
+        "comparison": "COMPARISON_GT",
+        "trigger": { "count": 1 }
+      }
+    }
+  ],
+  "combiner": "OR",
+  "enabled": true
+}
+EOF_END
+
+# Step 20: Deploy Alert Policy
+echo "${RED_TEXT}${BOLD_TEXT}Deploying alert policy for hello-app errors${RESET_FORMAT}"
 gcloud alpha monitoring policies create --policy-from-file=awesome.json
 
-# Step 20: Trigger Errors
-echo "${RED_TEXT}${BOLD_TEXT}Triggering errors${RESET_FORMAT}"
+# Step 21: Trigger Errors
+echo "${RED_TEXT}${BOLD_TEXT}Triggering errors to generate logs${RESET_FORMAT}"
 timeout 120 bash -c -- 'while true; do curl $(kubectl get services -n gmp-test -o jsonpath="{.items[*].status.loadBalancer.ingress[0].ip}")/error; sleep $((RANDOM % 4)); done'
+
+echo
 
 # =========================
 # COMPLETION FOOTER
 # =========================
-echo
 echo "${BLUE_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
 echo "${BLUE_TEXT}${BOLD_TEXT}                   LAB COMPLETED SUCCESSFULLY!                ${RESET_FORMAT}"
 echo "${BLUE_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
