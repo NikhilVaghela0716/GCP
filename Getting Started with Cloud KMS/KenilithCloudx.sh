@@ -1,92 +1,59 @@
-
 #!/bin/bash
 
-clear
-# =========================
-# WELCOME MESSAGE
-# =========================
-echo "${BLUE}${BOLD}==================================================================${RESET}"
-echo "${BLUE}${BOLD}              🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀           ${RESET}"
-echo "${BLUE}${BOLD}==================================================================${RESET}"
-echo
+# 1. Set Environment Variables
+# Using the Project ID to ensure the bucket name is unique
+export BUCKET_NAME="qwiklabs-gcp-${GOOGLE_CLOUD_PROJECT}-kms-lab"
+export KEYRING_NAME="labkey"
+export CRYPTOKEY_NAME="qwiklab"
+export USER_EMAIL=$(gcloud auth list --limit=1 2>/dev/null | grep '@' | awk '{print $2}')
 
-KEYRING_NAME=test
-CRYPTOKEY_NAME=qwiklab
+echo "Starting lab tasks for Project: $GOOGLE_CLOUD_PROJECT..."
 
-echo "${CYAN_TEXT}${BOLD_TEXT}Enable KMS API${RESET_FORMAT}"
-gcloud services enable cloudkms.googleapis.com
-
-echo "${CYAN_TEXT}${BOLD_TEXT}Create Cloud Storage bucket${RESET_FORMAT}"
-export BUCKET_NAME="$DEVSHELL_PROJECT_ID-enron_corpus"
+# 2. Create Cloud Storage Bucket
 gsutil mb gs://${BUCKET_NAME}
 
-echo "${CYAN_TEXT}${BOLD_TEXT}Download sample email${RESET_FORMAT}"
-gsutil cp gs://enron_emails/allen-p/inbox/1. .
-tail 1.
+# 3. Enable Cloud KMS API
+gcloud services enable cloudkms.googleapis.com
 
-echo "${CYAN_TEXT}${BOLD_TEXT}Create KMS keyring and key${RESET_FORMAT}"
+# 4. Create KeyRing and CryptoKey
 gcloud kms keyrings create $KEYRING_NAME --location global
 
-gcloud kms keys create $CRYPTOKEY_NAME \
-  --location global \
-  --keyring $KEYRING_NAME \
-  --purpose encryption
+gcloud kms keys create $CRYPTOKEY_NAME --location global \
+      --keyring $KEYRING_NAME \
+      --purpose encryption
 
-echo "${CYAN_TEXT}${BOLD_TEXT}Encrypt a single file${RESET_FORMAT}"
-PLAINTEXT=$(cat 1. | base64 -w0)
+# 5. Configure IAM Permissions
+# Granting Admin and Encrypter/Decrypter roles to the current user
+gcloud kms keyrings add-iam-policy-binding $KEYRING_NAME \
+    --location global \
+    --member user:$USER_EMAIL \
+    --role roles/cloudkms.admin
 
-curl -s "https://cloudkms.googleapis.com/v1/projects/$DEVSHELL_PROJECT_ID/locations/global/keyRings/$KEYRING_NAME/cryptoKeys/$CRYPTOKEY_NAME:encrypt" \
-  -d "{\"plaintext\":\"$PLAINTEXT\"}" \
-  -H "Authorization:Bearer $(gcloud auth application-default print-access-token)" \
-  -H "Content-Type:application/json" \
-| jq .ciphertext -r > 1.encrypted
+gcloud kms keyrings add-iam-policy-binding $KEYRING_NAME \
+    --location global \
+    --member user:$USER_EMAIL \
+    --role roles/cloudkms.cryptoKeyEncrypterDecrypter
 
-echo "${CYAN_TEXT}${BOLD_TEXT}Decrypt to verify${RESET_FORMAT}"
-curl -s "https://cloudkms.googleapis.com/v1/projects/$DEVSHELL_PROJECT_ID/locations/global/keyRings/$KEYRING_NAME/cryptoKeys/$CRYPTOKEY_NAME:decrypt" \
-  -d "{\"ciphertext\":\"$(cat 1.encrypted)\"}" \
-  -H "Authorization:Bearer $(gcloud auth application-default print-access-token)" \
-  -H "Content-Type:application/json" \
-| jq .plaintext -r | base64 -d
+# 6. Prepare Data & Bulk Encrypt
+# Copy data from the source bucket
+gsutil -m cp -r gs://${GOOGLE_CLOUD_PROJECT}-kms-lab-data/finance-dept .
 
-echo "${CYAN_TEXT}${BOLD_TEXT}Upload encrypted file${RESET_FORMAT}"
-gsutil cp 1.encrypted gs://${BUCKET_NAME}
-
-echo "${CYAN_TEXT}${BOLD_TEXT}ADDITION: Create inbox directory and sample emails${RESET_FORMAT}"
-
-mkdir -p allen-p/inbox
-
-echo "Attached is the Delta position for 1/18" > allen-p/inbox/1.
-echo "Please review the document and respond" > allen-p/inbox/2.
-echo "Meeting scheduled for tomorrow at 10 AM" > allen-p/inbox/3.
-
-echo "${CYAN_TEXT}${BOLD_TEXT}Encrypt all files under allen-p excluding already encrypted${RESET_FORMAT}"
-
-MYDIR=allen-p
+# Loop through files, Base64 encode, Encrypt via KMS API, and save as .encrypted
+MYDIR=finance-dept
 FILES=$(find $MYDIR -type f -not -name "*.encrypted")
 
 for file in $FILES; do
-  PLAINTEXT=$(cat "$file" | base64 -w0)
-
-  curl -s "https://cloudkms.googleapis.com/v1/projects/$DEVSHELL_PROJECT_ID/locations/global/keyRings/$KEYRING_NAME/cryptoKeys/$CRYPTOKEY_NAME:encrypt" \
+  echo "Encrypting $file..."
+  PLAINTEXT=$(cat $file | base64 -w0)
+  
+  curl -s "https://cloudkms.googleapis.com/v1/projects/$GOOGLE_CLOUD_PROJECT/locations/global/keyRings/$KEYRING_NAME/cryptoKeys/$CRYPTOKEY_NAME:encrypt" \
     -d "{\"plaintext\":\"$PLAINTEXT\"}" \
     -H "Authorization:Bearer $(gcloud auth application-default print-access-token)" \
     -H "Content-Type:application/json" \
-  | jq .ciphertext -r > "$file.encrypted"
+  | jq .ciphertext -r > $file.encrypted
 done
 
-echo "${CYAN_TEXT}${BOLD_TEXT}Upload encrypted inbox files${RESET_FORMAT}"
-gsutil -m cp allen-p/inbox/*.encrypted gs://${BUCKET_NAME}/allen-p/inbox/
+# 7. Upload Encrypted Files to your Bucket
+gsutil -m cp finance-dept/inbox/*.encrypted gs://${BUCKET_NAME}/finance-dept/inbox/
 
-
-# =========================
-# COMPLETION FOOTER
-# =========================
-echo
-echo "${RED}${BOLD}==============================================================${RESET}"
-echo "${RED}${BOLD}                   LAB COMPLETED SUCCESSFULLY!                ${RESET}"
-echo "${RED}${BOLD}==============================================================${RESET}"
-echo
-echo "${BLUE}${BOLD}🙏 Thanks for learning with Kenilith Cloudx${RESET}"
-echo "${RED}${BOLD}📢 Subscribe for more Google Cloud Labs:${RESET}"
-echo "${BLUE}${BOLD}https://www.youtube.com/@KenilithCloudx${RESET}"
-echo
+echo "Lab Completed Successfully!"
