@@ -12,9 +12,9 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Getting%20Started%20with%20Cloud%20KMS/KenilithCloud.sh"
-chmod +x KenilithCloud.sh
-./KenilithCloud.sh
+curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Getting%20Started%20with%20Cloud%20KMS/KenilithCloudx.sh"
+chmod +x KenilithCloudx.sh
+./KenilithCloudx.sh
 ```
 
 ---
