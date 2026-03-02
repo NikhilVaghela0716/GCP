@@ -1,19 +1,17 @@
 #!/bin/bash
+
+# Color Definitions
 RED_TEXT=$'\033[0;91m'
 BLUE_TEXT=$'\033[0;94m'
 BOLD_TEXT=$'\033[1m'
 UNDERLINE_TEXT=$'\033[4m'
-BLINK_TEXT=$'\033[5m'
-NO_COLOR=$'\033[0m'
 RESET_FORMAT=$'\033[0m'
-REVERSE_TEXT=$'\033[7m'
+
 clear
-# =========================
-# WELCOME MESSAGE
-# =========================
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}              🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀            ${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
+
+echo "${BLUE}${BOLD}==================================================================${RESET}"
+echo "${BLUE}${BOLD}              🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀           ${RESET}"
+echo "${BLUE}${BOLD}==================================================================${RESET}"
 echo
 
 KEYRING_NAME=test
@@ -83,16 +81,13 @@ done
 echo "${BLUE_TEXT}${BOLD_TEXT}Upload encrypted inbox files${RESET_FORMAT}"
 gsutil -m cp allen-p/inbox/*.encrypted gs://${BUCKET_NAME}/allen-p/inbox/
 
-
-# =========================
-# COMPLETION FOOTER
 # =========================
 echo
-echo "${RED_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}                    LAB COMPLETED SUCCESSFULLY!               ${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
+echo "${RED}${BOLD}==============================================================${RESET}"
+echo "${RED}${BOLD}                   LAB COMPLETED SUCCESSFULLY!                ${RESET}"
+echo "${RED}${BOLD}==============================================================${RESET}"
 echo
-echo "${BLUE_TEXT}${BOLD_TEXT}🙏 Thanks for learning with Kenilith Cloudx${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}📢 Subscribe for more Google Cloud Labs:${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}https://www.youtube.com/@KenilithCloudx${RESET_FORMAT}"
+echo "${BLUE}${BOLD}🙏 Thanks for learning with Kenilith Cloudx${RESET}"
+echo "${RED}${BOLD}📢 Subscribe for more Google Cloud Labs:${RESET}"
+echo "${BLUE}${BOLD}https://www.youtube.com/@KenilithCloudx${RESET}"
 echo
