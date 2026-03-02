@@ -9,11 +9,7 @@ RESET_FORMAT=$'\033[0m'
 
 clear
 
-# Welcome message
-echo "${BLUE_TEXT}${BOLD_TEXT}=================================================================="
-echo "          🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀                "
-echo "==================================================================${RESET_FORMAT}"
-echo
+
 
 KEYRING_NAME=test
 CRYPTOKEY_NAME=qwiklab
@@ -80,11 +76,6 @@ done
 echo "${BLUE_TEXT}${BOLD_TEXT}Upload encrypted inbox files${RESET_FORMAT}"
 gsutil -m cp allen-p/inbox/*.encrypted gs://${BUCKET_NAME}/allen-p/inbox/
 
-echo
-echo "${BLUE_TEXT}${BOLD_TEXT}==============================================================="
-echo "                  LAB COMPLETED SUCCESSFULLY!                  "
-echo "===============================================================${RESET_FORMAT}"
-echo
 echo "${RED_TEXT}🙏 Thanks for learning with Kenilith Cloudx"
 echo "📢 Subscribe for more Google Cloud Labs:"
 echo "${BOLD_TEXT}${UNDERLINE_TEXT}https://www.youtube.com/@KenilithCloudx${RESET_FORMAT}"
