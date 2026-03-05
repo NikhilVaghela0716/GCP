@@ -1,4 +1,4 @@
-# 🚀 Managing Deployments Using Kubernetes Engine || GSP053
+# 🚀 Managing Deployments Using Kubernetes Engine | GSP053
 
 ---
 
@@ -13,9 +13,9 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Managing%20Deployments%20Using%20Kubernetes%20Engine/NikhilVaghela0716.sh
-sudo chmod +x NikhilVaghela0716.sh
-./NikhilVaghela0716.sh
+curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Managing%20Deployments%20Using%20Kubernetes%20Engine/KenilithCloudx.sh
+sudo chmod +x KenilithCloudx.sh
+./KenilithCloudx.sh
 ```
 
 ---
