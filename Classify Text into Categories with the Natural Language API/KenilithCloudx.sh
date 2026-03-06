@@ -6,17 +6,16 @@ BLUE='\033[0;94m'
 
 NC='\033[0m' # No Color
 BOLD='\033[1m'
-UNDERLINE='\033[4m'
 
 # =========================
 # WELCOME MESSAGE
 # =========================
-echo "${BLUE}${BOLD}==================================================================${NC}"
-echo "${BLUE}${BOLD}            🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀               ${NC}"
-echo "${BLUE}${BOLD}==================================================================${NC}"
+echo -e "${BLUE}${BOLD}==================================================================${NC}"
+echo -e "${BLUE}${BOLD}            🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀               ${NC}"
+echo -e "${BLUE}${BOLD}==================================================================${NC}"
 
 clear
-
+# Section header function
 section() {
     echo -e "\n${RED}${BOLD}${1}${NC}"
 }
@@ -110,11 +109,11 @@ bq mk --table $DEVSHELL_PROJECT_ID:news_classification_dataset.article_data \
 # COMPLETION FOOTER
 # =========================
 echo
-echo "${RED}${BOLD}==============================================================${NC}"
-echo "${RED}${BOLD}                LAB COMPLETED SUCCESSFULLY!                ${NC}"
-echo "${RED}${BOLD}==============================================================${NC}"
+echo -e "${RED}${BOLD}==============================================================${NC}"
+echo -e "${RED}${BOLD}                LAB COMPLETED SUCCESSFULLY!                ${NC}"
+echo -e "${RED}${BOLD}==============================================================${NC}"
 echo
-echo "${BLUE}${BOLD}🙏 Thanks for learning with Kenilith Cloudx${NC}"
-echo "${RED}${BOLD}📢 Subscribe for more Google Cloud Labs:${NC}"
-echo "${BLUE}${BOLD}https://www.youtube.com/@KenilithCloudx${NC}"
+echo -e "${BLUE}${BOLD}🙏 Thanks for learning with Kenilith Cloudx${NC}"
+echo -e "${RED}${BOLD}📢 Subscribe for more Google Cloud Labs:${NC}"
+echo -e "${BLUE}${BOLD}https://www.youtube.com/@KenilithCloudx${NC}"
 echo
