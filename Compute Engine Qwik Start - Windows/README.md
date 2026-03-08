@@ -1,4 +1,4 @@
-# 🚀Compute Engine: Qwik Start - Windows || GSP093 
+# 🚀Compute Engine: Qwik Start - Windows | GSP093 
 
 ---
 
@@ -13,9 +13,9 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Compute%20Engine%20Qwik%20Start%20-%20Windows/NikhilVaghela0716.sh"
-chmod +x NikhilVaghela0716.sh
-./NikhilVaghela0716.sh
+curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Compute%20Engine%20Qwik%20Start%20-%20Windows/KenilithCloudx.sh"
+chmod +x KenilithCloudx.sh
+./KenilithCloudx.sh
 ```
 
 
