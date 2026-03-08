@@ -81,8 +81,8 @@ echo "${BLUE_TEXT}${BOLD_TEXT}[Step 7/9] Setting up email notification channels.
 cat > email-channel.json <<EOF_END
 {
   "type": "email",
-  "displayName": "drabhishek",
-  "description": "drabhishek",
+  "displayName": "kenilithcloudx",
+  "description": "kenilithcloudx",
   "labels": {
     "email_address": "$USER_EMAIL"
   }
