@@ -55,6 +55,9 @@ if __name__ == "__main__":
         print("Error:", e)
 ```
 
+```
+pip install google-cloud-aiplatform vertexai
+```
 ---
 
 ## 🎉 Congratulations! Lab Completed Successfully! 🏆
