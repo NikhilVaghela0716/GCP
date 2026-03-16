@@ -55,7 +55,7 @@ def load_image_from_url(prompt):
 if __name__ == "__main__":
     text_prompt = "Write a descriptive caption for this image and suggest a flavor profile."
     load_image_from_url(text_prompt)
----
+
 ```
 
 ## 🎉 Congratulations! Lab Completed Successfully! 🏆
