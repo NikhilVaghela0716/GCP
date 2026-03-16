@@ -13,52 +13,50 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
+
 import vertexai
+import urllib.request
 from vertexai.generative_models import GenerativeModel, Part
 
-# -----------------------------
-# CONFIG
-# -----------------------------
-# Replace these with the values from your Qwiklabs lab panel
-PROJECT_ID = "YOUR_PROJECT_ID" 
-LOCATION = "YOUR_REGION"
+PROJECT_ID = "your-project-id"
+LOCATION = "your-location"
 
-# Initialize Vertex AI
 vertexai.init(project=PROJECT_ID, location=LOCATION)
 
 def load_image_from_url(prompt):
-    """
-    Generates content using Gemini 2.0 Flash
-    with image + text input.
-    """
-    # 1. Initialize the generative model
-    model = GenerativeModel("gemini-2.0-flash")
+    print(f"Processing prompt: {prompt}")
+    image_url = "https://storage.googleapis.com/cloud-samples-data/generative-ai/image/scones.jpg"
     
-    # 2. Load the image from Cloud Storage
-    image = Part.from_uri(
-        uri="gs://cloud-samples-data/vision/landmark/eiffel_tower.jpg",
-        mime_type="image/jpeg"
-    )
-    
-    # 3. Generate the response using both the image and the text prompt
-    response = model.generate_content([image, prompt])
-    
-    return response.text
+    try:
+        with urllib.request.urlopen(image_url) as response:
+            image_bytes = response.read()
+            
+        image_part = Part.from_data(
+            data=image_bytes,
+            mime_type="image/jpeg"
+        )
+        model = GenerativeModel("gemini-2.5-pro")
+
+        response = model.generate_content(
+            [image_part, prompt],
+            generation_config={
+                "temperature": 0.4,
+                "max_output_tokens": 2048
+            }
+        )
+        
+        print("\n--- Model Response ---")
+        print(response.text)
+        return response.text
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 if __name__ == "__main__":
-    prompt = "Describe this image in detail and explain what makes it unique."
-    print("Prompt:", prompt)
-    print("\nModel Response:\n")
-    try:
-        print(load_image_from_url(prompt))
-    except Exception as e:
-        print("Error:", e)
-```
-
-```
-pip install google-cloud-aiplatform vertexai
-```
+    text_prompt = "Write a descriptive caption for this image and suggest a flavor profile."
+    load_image_from_url(text_prompt)
 ---
+```
 
 ## 🎉 Congratulations! Lab Completed Successfully! 🏆
 
