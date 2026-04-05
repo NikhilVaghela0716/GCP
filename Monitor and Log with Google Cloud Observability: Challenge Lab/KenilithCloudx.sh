@@ -3,8 +3,8 @@
 # Define color variables
 RED=$'\033[0;91m'
 BLUE=$'\033[0;94m'
-RESET=$'\033[0m'
 BOLD=$'\033[1m'
+RESET=$'\033[0m'
 
 clear
 
@@ -12,53 +12,65 @@ clear
 # WELCOME MESSAGE
 # =========================
 echo "${BLUE}${BOLD}==================================================================${RESET}"
-echo "${BLUE}${BOLD}            🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀               ${RESET}"
+echo "${BLUE}${BOLD}            🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀             ${RESET}"
 echo "${BLUE}${BOLD}==================================================================${RESET}"
+echo ""
 
 gcloud services enable monitoring.googleapis.com
 
 export ZONE=$(gcloud compute instances list video-queue-monitor --format 'csv[no-heading](zone)')
+
 export REGION="${ZONE%-*}"
+
 export INSTANCE_ID=$(gcloud compute instances describe video-queue-monitor --project="$DEVSHELL_PROJECT_ID" --zone="$ZONE" --format="get(id)")
 
 gcloud compute instances stop video-queue-monitor --zone $ZONE
 
 cat > startup-script.sh <<EOF_START
+
+
 export PROJECT_ID=$(gcloud config list --format 'value(core.project)')
 export ZONE=$(gcloud compute project-info describe \
 --format="value(commonInstanceMetadata.items[google-compute-default-zone])")
 export REGION=$(gcloud compute project-info describe \
 --format="value(commonInstanceMetadata.items[google-compute-default-region])")
 
+## Install Golang
 sudo apt update && sudo apt -y
 sudo apt-get install wget -y
 sudo apt-get -y install git
 sudo chmod 777 /usr/local/
 sudo wget https://go.dev/dl/go1.22.8.linux-amd64.tar.gz 
 sudo tar -C /usr/local -xzf go1.22.8.linux-amd64.tar.gz
-export PATH=\$PATH:/usr/local/go/bin
+export PATH=$PATH:/usr/local/go/bin
 
+# Install ops agent 
 curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
 sudo bash add-google-cloud-ops-agent-repo.sh --also-install
 sudo service google-cloud-ops-agent start
 
+# Create go working directory and add go path
 mkdir /work
 mkdir /work/go
 mkdir /work/go/cache
 export GOPATH=/work/go
 export GOCACHE=/work/go/cache
 
+# Install Video queue Go source code
 cd /work/go
 mkdir video
 gsutil cp gs://spls/gsp338/video_queue/main.go /work/go/video/main.go
 
+# Get Cloud Monitoring (stackdriver) modules
 go get go.opencensus.io
 go get contrib.go.opencensus.io/exporter/stackdriver
 
-export MY_PROJECT_ID=\$DEVSHELL_PROJECT_ID
+# Configure env vars for the Video Queue processing application
+export MY_PROJECT_ID=$DEVSHELL_PROJECT_ID
 export MY_GCE_INSTANCE_ID=$INSTANCE_ID
-export MY_GCE_INSTANCE_ZONE=\$ZONE
+export MY_GCE_INSTANCE_ZONE=$ZONE
 
+# Initialize and run the Go application
 cd /work
 go mod init go/video/main
 go mod tidy
@@ -94,6 +106,7 @@ email_channel_id=$(echo "$email_channel_info" | grep -oP 'name: \K[^ ]+' | head 
 cat > cloudwalabanda.json <<EOF_END
 {
   "displayName": "cloudwalabanda",
+  "userLabels": {},
   "conditions": [
     {
       "displayName": "VM Instance - logging/user/large_video_upload_rate",
@@ -102,6 +115,7 @@ cat > cloudwalabanda.json <<EOF_END
         "aggregations": [
           {
             "alignmentPeriod": "300s",
+            "crossSeriesReducer": "REDUCE_NONE",
             "perSeriesAligner": "ALIGN_RATE"
           }
         ],
@@ -114,27 +128,35 @@ cat > cloudwalabanda.json <<EOF_END
       }
     }
   ],
+  "alertStrategy": {
+    "notificationPrompts": [
+      "OPENED"
+    ]
+  },
   "combiner": "OR",
   "enabled": true,
   "notificationChannels": [
     "$email_channel_id"
-  ]
+  ],
+  "severity": "SEVERITY_UNSPECIFIED"
 }
 EOF_END
 
+# Create the alert policy
 gcloud alpha monitoring policies create --policy-from-file=cloudwalabanda.json
 
-echo "${BLUE}${BOLD}Click here:${RESET} ${BLUE}${BOLD}https://console.cloud.google.com/monitoring/dashboards?project=$DEVSHELL_PROJECT_ID${RESET}"
+echo "${RED}${BOLD}  --> Click here to open Monitoring Dashboard :${RESET}"
+echo "${BLUE}${BOLD}      https://console.cloud.google.com/monitoring/dashboards?project=$DEVSHELL_PROJECT_ID${RESET}"
+echo ""
 
 # =========================
 # COMPLETION FOOTER
 # =========================
-echo
-echo "${RED}${BOLD}==============================================================${RESET}"
-echo "${RED}${BOLD}                LAB COMPLETED SUCCESSFULLY!                ${RESET}"
-echo "${RED}${BOLD}==============================================================${RESET}"
-echo
-echo "${BLUE}${BOLD}🙏 Thanks for learning with Kenilith Cloudx${RESET}"
-echo "${RED}${BOLD}📢 Subscribe for more Google Cloud Labs:${RESET}"
-echo "${BLUE}${BOLD}https://www.youtube.com/@KenilithCloudx${RESET}"
-echo
+echo "${RED}${BOLD}==================================================================${RESET}"
+echo "${RED}${BOLD}                  LAB COMPLETED SUCCESSFULLY !                   ${RESET}"
+echo "${RED}${BOLD}==================================================================${RESET}"
+echo ""
+echo "${BLUE}${BOLD}  Thanks for learning with Kenilith Cloudx${RESET}"
+echo "${RED}${BOLD}  Subscribe for more Google Cloud Labs :${RESET}"
+echo "${BLUE}${BOLD}  https://www.youtube.com/@KenilithCloudx${RESET}"
+echo ""
