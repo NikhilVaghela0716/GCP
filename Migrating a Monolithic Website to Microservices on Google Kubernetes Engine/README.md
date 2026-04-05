@@ -13,9 +13,6 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-export ZONE=
-```
-```bash
 curl -LO https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Migrating%20a%20Monolithic%20Website%20to%20Microservices%20on%20Google%20Kubernetes%20Engine/KenilithCloudx.sh
 sudo chmod +x KenilithCloudx.sh
 ./KenilithCloudx.sh
