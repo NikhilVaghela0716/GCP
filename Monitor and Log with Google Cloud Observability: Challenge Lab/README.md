@@ -12,6 +12,10 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
+export METRIC=
+export VALUE=
+```
+```bash
 curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Monitor%20and%20Log%20with%20Google%20Cloud%20Observability%3A%20Challenge%20Lab/KenilithCloudx.sh"
 chmod +x KenilithCloudx.sh
 ./KenilithCloudx.sh
