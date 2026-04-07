@@ -16,7 +16,11 @@
 gcloud services enable datamigration.googleapis.com --quiet
 gcloud services enable servicenetworking.googleapis.com --quiet
 ```
-
+```bash
+curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Migrating%20On-premises%20MySQL%20Using%20a%20Continuous%20Database%20Migration%20Service%20Job/KenilithCloudx.sh"
+chmod +x KenilithCloudx.sh
+./KenilithCloudx.sh
+```
 ---
 
 ## 🎉 Congratulations! Lab Completed Successfully! 🏆
