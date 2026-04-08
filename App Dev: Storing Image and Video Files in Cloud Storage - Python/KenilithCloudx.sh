@@ -9,18 +9,15 @@ NC='\033[0m' # No Color
 # =========================
 # WELCOME MESSAGE
 # =========================
-echo "${BLUE}${BOLD}==================================================================${RESET}"
-echo "${BLUE}${BOLD}            🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀             ${RESET}"
-echo "${BLUE}${BOLD}==================================================================${RESET}"
+echo -e "${BLUE}==================================================================${NC}"
+echo -e "${BLUE}            🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀             ${NC}"
+echo -e "${BLUE}==================================================================${NC}"
 echo ""
 
 echo
 echo -e "${BLUE}Initializing Google Cloud Storage Lab environment...${NC}"
 echo
 
-# Get user input for region
-echo -e "${RED}Kindly provide your desired region below:${NC}"
-echo -e "${BLUE}Examples: us-central1, us-east1, europe-west1, asia-southeast1${NC}"
 read -p "Enter region: " USER_REGION
 
 # Validate region input
@@ -72,6 +69,9 @@ cd quiz/gcp
 # Create storage.py with Cloud Storage integration
 echo -e "${BLUE}Writing Cloud Storage integration into storage.py...${NC}"
 cat > storage.py <<EOF_END
+# TODO: Import os to access environment variables
+import os
+# END TODO
 # TODO: Get the Bucket name from the
 # GCLOUD_BUCKET environment variable
 bucket_name = os.getenv('GCLOUD_BUCKET')
@@ -163,7 +163,7 @@ cd ~/training-data-analyst/courses/developingapps/python/cloudstorage/start
 
 # Display configuration summary
 echo
-echo -e "${RED}${BLUE}=== Configuration Summary ===${NC}"
+echo -e "${RED}=== Configuration Summary ===${NC}"
 echo -e "${BLUE}Project ID    : $DEVSHELL_PROJECT_ID${NC}"
 echo -e "${BLUE}Region        : $USER_REGION${NC}"
 echo -e "${BLUE}Storage Bucket: $GCLOUD_BUCKET${NC}"
@@ -180,11 +180,11 @@ python run_server.py
 # =========================
 # COMPLETION FOOTER
 # =========================
-echo "${RED}${BOLD}==================================================================${RESET}"
-echo "${RED}${BOLD}                  LAB COMPLETED SUCCESSFULLY !                   ${RESET}"
-echo "${RED}${BOLD}==================================================================${RESET}"
+echo -e "${RED}==================================================================${NC}"
+echo -e "${RED}                  LAB COMPLETED SUCCESSFULLY !                   ${NC}"
+echo -e "${RED}==================================================================${NC}"
 echo ""
-echo "${BLUE}${BOLD}  Thanks for learning with Kenilith Cloudx${RESET}"
-echo "${RED}${BOLD}  Subscribe for more Google Cloud Labs :${RESET}"
-echo "${BLUE}${BOLD}  https://www.youtube.com/@KenilithCloudx${RESET}"
+echo -e "${BLUE}  Thanks for learning with Kenilith Cloudx${NC}"
+echo -e "${RED}  Subscribe for more Google Cloud Labs :${NC}"
+echo -e "${BLUE}  https://www.youtube.com/@KenilithCloudx${NC}"
 echo ""
