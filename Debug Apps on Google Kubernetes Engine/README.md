@@ -13,7 +13,7 @@
 ## 💻 Run in Cloud Shell:
 
 ```bash
-curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Compute%20Engine%20Qwik%20Start%20-%20Windows/KenilithCloudx.sh"
+curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Debug%20Apps%20on%20Google%20Kubernetes%20Engine/KenilithCloudx.sh"
 chmod +x KenilithCloudx.sh
 ./KenilithCloudx.sh
 ```
