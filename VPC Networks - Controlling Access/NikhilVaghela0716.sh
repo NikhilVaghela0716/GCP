@@ -9,12 +9,14 @@ RESET=`tput sgr0`
 
 
 # =========================
+
+# =========================
 # WELCOME MESSAGE
 # =========================
-echo "${BLUE}${BOLD}==================================================================${RESET}"
-echo "${BLUE}${BOLD}              🚀 GOOGLE CLOUD LAB | NIKHIL VAGHELA 🚀            ${RESET}"
-echo "${BLUE}${BOLD}==================================================================${RESET}"
-echo
+echo -e "${BLUE}==================================================================${NC}"
+echo -e "${BLUE}            🚀 GOOGLE CLOUD LAB | Kenilith Cloudx 🚀             ${NC}"
+echo -e "${BLUE}==================================================================${NC}"
+echo ""
 
 # Ask for zone input
 echo "${RED}${BOLD}Please enter the zone value to export :${RESET}"
@@ -59,15 +61,17 @@ gcloud compute ssh green --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet --c
 
 echo "${BLUE}${BOLD}Congratulations For Completing The Lab !!!${RESET}"
 
-echo
-echo "${RED}${BOLD}==============================================================${RESET}"
-echo "${RED}${BOLD}                ✅ LAB COMPLETED SUCCESSFULLY!                ${RESET}"
-echo "${RED}${BOLD}==============================================================${RESET}"
-echo
-echo "${BLUE}${BOLD}🙏 Thanks for learning with Nikhil Vaghela${RESET}"
-echo "${RED}${BOLD}📢 Subscribe for more Google Cloud Labs:${RESET}"
-echo "${BLUE}${BOLD}https://www.youtube.com/@Nikhil-Vaghela0716${RESET}"
-echo
+# =========================
+# COMPLETION FOOTER
+# =========================
+echo -e "${RED}==================================================================${NC}"
+echo -e "${RED}                  LAB COMPLETED SUCCESSFULLY !                   ${NC}"
+echo -e "${RED}==================================================================${NC}"
+echo ""
+echo -e "${BLUE}  Thanks for learning with Kenilith Cloudx${NC}"
+echo -e "${RED}  Subscribe for more Google Cloud Labs :${NC}"
+echo -e "${BLUE}  https://www.youtube.com/@KenilithCloudx${NC}"
+echo ""
 
 # Clean up temporary files
 rm -f bluessh.sh greenssh.sh
