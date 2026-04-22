@@ -1,4 +1,4 @@
-# 🚀GKE Workload Optimization | GSP769
+# 🚀Optimizing Cost with Google Cloud Storage | GSP649
 
 ---
 
