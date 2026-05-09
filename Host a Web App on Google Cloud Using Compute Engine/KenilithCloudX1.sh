@@ -328,7 +328,7 @@ echo
 # =========================
 echo
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}     ✅  ALL STEPS DONE — CHECK YOUR TASKS UP TO TASK 5 !        ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}     ✅  ALL STEPS DONE — CHECK YOUR TASKS UP TO TASK 6 !        ${RESET_FORMAT}"
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
 echo "${RED_TEXT}${BOLD_TEXT}  🙏 Thank you for practicing with KenilithCloudX${RESET_FORMAT}"
