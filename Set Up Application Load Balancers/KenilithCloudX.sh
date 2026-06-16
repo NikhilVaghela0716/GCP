@@ -35,7 +35,7 @@ clear
 echo
 echo -e "${BOLD}${CYAN}  ╔═══════════════════════════════════════════════════╗${RESET}"
 echo -e "${BOLD}${CYAN}  ║                                                   ║${RESET}"
-echo -e "${BOLD}${CYAN}  ║   ${WHITE}💻  TECH & CODE  │  HTTP Load Balancer Lab     ${CYAN}║${RESET}"
+echo -e "${BOLD}${CYAN}  ║   ${WHITE}💻  HTTP Load Balancer Lab     ${CYAN}║${RESET}"
 echo -e "${BOLD}${CYAN}  ║   ${DIM}${WHITE}Initiating execution...                       ${CYAN}${BOLD}║${RESET}"
 echo -e "${BOLD}${CYAN}  ║                                                   ║${RESET}"
 echo -e "${BOLD}${CYAN}  ╚═══════════════════════════════════════════════════╝${RESET}"
