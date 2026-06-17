@@ -1,139 +1,134 @@
 #!/bin/bash
 
-# ══════════════════════════════════════════
-#  COLOR & STYLE DEFINITIONS
-# ══════════════════════════════════════════
-RESET='\033[0m'
-BOLD='\033[1m'
-DIM='\033[2m'
+# Define color variables
+RED_TEXT=$'\033[0;91m'
+BLUE_TEXT=$'\033[0;94m'
 
-BLACK='\033[0;30m'
-RED='\033[0;91m'
-GREEN='\033[0;92m'
-YELLOW='\033[0;93m'
-BLUE='\033[0;94m'
-MAGENTA='\033[0;95m'
-CYAN='\033[0;96m'
-WHITE='\033[0;97m'
+NO_COLOR=$'\033[0m'
+RESET_FORMAT=$'\033[0m'
 
-# ── Utility Helpers ──────────────────────
-print_line()    { echo -e "${DIM}${CYAN}  ─────────────────────────────────────────────────${RESET}"; }
-print_dline()   { echo -e "${CYAN}  ═════════════════════════════════════════════════${RESET}"; }
-section()       { echo; echo -e "${BOLD}${BLUE}  ┌─ ${WHITE}$1${RESET}"; print_line; }
-info()          { echo -e "  ${CYAN}  ℹ  ${WHITE}$1${RESET}"; }
-success()       { echo -e "  ${GREEN}  ✔  ${WHITE}$1${RESET}"; }
-warn()          { echo -e "  ${YELLOW}  ⚠  ${YELLOW}$1${RESET}"; }
-error_msg()     { echo -e "  ${RED}  ✖  ${RED}$1${RESET}"; }
-step()          { echo -e "  ${MAGENTA}  ➤  ${WHITE}$1${RESET}"; }
-kv()            { echo -e "  ${DIM}     ${CYAN}$1:${RESET}  ${BOLD}${WHITE}$2${RESET}"; }
+# Define text formatting variables
+BOLD_TEXT=$'\033[1m'
+UNDERLINE_TEXT=$'\033[4m'
 
 clear
 
-# ══════════════════════════════════════════
-#  WELCOME BANNER
-# ══════════════════════════════════════════
-echo
-echo -e "${BOLD}${CYAN}  ╔═══════════════════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}${CYAN}  ║                                                   ║${RESET}"
-echo -e "${BOLD}${CYAN}  ║   ${WHITE}💻  HTTP Load Balancer Lab     ${CYAN}║${RESET}"
-echo -e "${BOLD}${CYAN}  ║   ${DIM}${WHITE}Initiating execution...                       ${CYAN}${BOLD}║${RESET}"
-echo -e "${BOLD}${CYAN}  ║                                                   ║${RESET}"
-echo -e "${BOLD}${CYAN}  ╚═══════════════════════════════════════════════════╝${RESET}"
+# Spinner function for visual feedback
+spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\'
+    while ps -p $pid > /dev/null 2>&1; do
+        local temp=${spinstr#?}
+        printf " [%c]  " "$spinstr"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b\b"
+    done
+    printf "    \b\b\b\b"
+}
+
+# =========================
+# WELCOME MESSAGE
+# =========================
+echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}                  🚀 GOOGLE CLOUD LAB | KenilithCloudX            ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
 
-
-# ══════════════════════════════════════════
-#  AUTH & ZONE CONFIGURATION
-# ══════════════════════════════════════════
-section "AUTHENTICATION & ZONE CONFIGURATION"
-
-step "Listing active gcloud accounts ..."
-echo
 gcloud auth list
-echo
 
-echo -e "  ${YELLOW}  ?  ${YELLOW}Enter the compute zone${RESET} ${DIM}(e.g. us-central1-a)${RESET}"
-echo -ne "  ${BOLD}${WHITE}      → ${RESET}"
-read ZONE
-
-if [[ -z "$ZONE" ]]; then
-    error_msg "Zone cannot be empty. Exiting."
-    exit 1
-fi
-
+read -p "Enter Zone: " ZONE
 export REGION=${ZONE%-*}
 
-gcloud config set compute/zone "$ZONE" --quiet
-gcloud config set compute/region "$REGION" --quiet
+gcloud config set compute/zone $ZONE
+gcloud config set compute/region $REGION
 
 echo
-kv "Zone"   "$ZONE"
-kv "Region" "$REGION"
-success "Zone configuration applied."
+echo "${BLUE_TEXT}${BOLD_TEXT}▬▬▬▬▬▬▬▬▬ CREATING WEB SERVERS ▬▬▬▬▬▬▬▬▬${RESET_FORMAT}"
 
-
-# ══════════════════════════════════════════
-#  WEB SERVER SETUP (network LB backends)
-# ══════════════════════════════════════════
-section "WEB SERVER SETUP"
-
-create_web_server() {
-    local server_name=$1
-    step "Creating instance: ${CYAN}${server_name}${WHITE} ..."
-
-    gcloud compute instances create "$server_name" \
-      --zone="$ZONE" \
-      --tags=network-lb-tag \
-      --machine-type=e2-small \
-      --image-family=debian-11 \
-      --image-project=debian-cloud \
-      --metadata=startup-script='#!/bin/bash
+# Create www1
+echo "${RED_TEXT}Creating www1...${RESET_FORMAT}"
+gcloud compute instances create www1 \
+    --zone=$ZONE \
+    --tags=network-lb-tag \
+    --machine-type=e2-small \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --metadata=startup-script='#!/bin/bash
       apt-get update
       apt-get install apache2 -y
       service apache2 restart
       echo "
-<h3>Web Server: '"$server_name"'</h3>" | tee /var/www/html/index.html' \
-      --quiet
+<h3>Web Server: www1</h3>" | tee /var/www/html/index.html' &
 
-    success "Instance ${CYAN}${server_name}${WHITE} created."
-}
+pid=$!
+spinner $pid
+wait $pid
+echo "${BLUE_TEXT}✓ www1 created successfully${RESET_FORMAT}"
 
-create_web_server www1
-create_web_server www2
-create_web_server www3
+# Create www2
+echo "${RED_TEXT}Creating www2...${RESET_FORMAT}"
+gcloud compute instances create www2 \
+    --zone=$ZONE \
+    --tags=network-lb-tag \
+    --machine-type=e2-small \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --metadata=startup-script='#!/bin/bash
+      apt-get update
+      apt-get install apache2 -y
+      service apache2 restart
+      echo "
+<h3>Web Server: www2</h3>" | tee /var/www/html/index.html' &
+
+pid=$!
+spinner $pid
+wait $pid
+echo "${BLUE_TEXT}✓ www2 created successfully${RESET_FORMAT}"
+
+# Create www3
+echo "${RED_TEXT}Creating www3...${RESET_FORMAT}"
+gcloud compute instances create www3 \
+    --zone=$ZONE  \
+    --tags=network-lb-tag \
+    --machine-type=e2-small \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --metadata=startup-script='#!/bin/bash
+      apt-get update
+      apt-get install apache2 -y
+      service apache2 restart
+      echo "
+<h3>Web Server: www3</h3>" | tee /var/www/html/index.html' &
+
+pid=$!
+spinner $pid
+wait $pid
+echo "${BLUE_TEXT}✓ www3 created successfully${RESET_FORMAT}"
 
 echo
-success "All 3 web server instances launched."
+echo "${BLUE_TEXT}${BOLD_TEXT}▬▬▬▬▬▬▬▬▬ CONFIGURING FIREWALL ▬▬▬▬▬▬▬▬▬${RESET_FORMAT}"
 
-
-# ══════════════════════════════════════════
-#  FIREWALL — network LB
-# ══════════════════════════════════════════
-section "FIREWALL SETUP (Network LB)"
-
-step "Creating firewall rule for HTTP traffic on port 80 ..."
-
+echo "${RED_TEXT}Creating firewall rule...${RESET_FORMAT}"
 gcloud compute firewall-rules create www-firewall-network-lb \
-    --target-tags network-lb-tag --allow tcp:80 --quiet
+    --target-tags network-lb-tag --allow tcp:80 &
 
-success "Firewall rule ${CYAN}www-firewall-network-lb${WHITE} created."
+pid=$!
+spinner $pid
+wait $pid
+echo "${BLUE_TEXT}✓ Firewall rule created${RESET_FORMAT}"
 
 echo
-step "Fetching instance list ..."
-echo
+echo "${BLUE_TEXT}${BOLD_TEXT}▬▬▬▬▬▬▬▬▬ VERIFYING INSTANCES ▬▬▬▬▬▬▬▬▬${RESET_FORMAT}"
 gcloud compute instances list
+
 echo
+echo "${BLUE_TEXT}${BOLD_TEXT}▬▬▬▬▬▬▬▬▬ CREATING INSTANCE TEMPLATE ▬▬▬▬▬▬▬▬▬${RESET_FORMAT}"
 
-
-# ══════════════════════════════════════════
-#  INSTANCE TEMPLATE & MANAGED GROUP
-# ══════════════════════════════════════════
-section "INSTANCE TEMPLATE & MANAGED GROUP"
-
-step "Creating instance template ${CYAN}lb-backend-template${WHITE} ..."
-
+echo "${RED_TEXT}Creating lb-backend-template...${RESET_FORMAT}"
 gcloud compute instance-templates create lb-backend-template \
-   --region="$REGION" \
+   --region=$REGION \
    --network=default \
    --subnet=default \
    --tags=allow-health-check \
@@ -149,123 +144,128 @@ gcloud compute instance-templates create lb-backend-template \
      http://169.254.169.254/computeMetadata/v1/instance/name)"
      echo "Page served from: $vm_hostname" | \
      tee /var/www/html/index.html
-     systemctl restart apache2' \
-   --quiet
+     systemctl restart apache2' &
 
-success "Instance template created."
-
-step "Creating managed instance group ${CYAN}lb-backend-group${WHITE} ..."
-
-gcloud compute instance-groups managed create lb-backend-group \
-   --template=lb-backend-template --size=2 --zone="$ZONE" --quiet
-
-success "Managed instance group created."
+pid=$!
+spinner $pid
+wait $pid
+echo "${BLUE_TEXT}✓ Instance template created${RESET_FORMAT}"
 
 echo
-warn "Waiting 60 seconds for managed instances to start ..."
+echo "${BLUE_TEXT}${BOLD_TEXT}▬▬▬▬▬▬▬▬▬ CREATING MANAGED INSTANCE GROUP ▬▬▬▬▬▬▬▬▬${RESET_FORMAT}"
+
+echo "${RED_TEXT}Creating lb-backend-group...${RESET_FORMAT}"
+gcloud compute instance-groups managed create lb-backend-group \
+   --template=lb-backend-template --size=2 --zone=$ZONE &
+
+pid=$!
+spinner $pid
+wait $pid
+echo "${BLUE_TEXT}✓ Managed instance group created${RESET_FORMAT}"
+
+echo
+echo "${RED_TEXT}Waiting for managed instances to start...${RESET_FORMAT}"
 sleep 60
-success "Startup wait complete."
 
+echo
+echo "${BLUE_TEXT}${BOLD_TEXT}▬▬▬▬▬▬▬▬▬ CONFIGURING HEALTH CHECK FIREWALL ▬▬▬▬▬▬▬▬▬${RESET_FORMAT}"
 
-# ══════════════════════════════════════════
-#  FIREWALL — health checks
-# ══════════════════════════════════════════
-section "FIREWALL SETUP (Health Checks)"
-
-step "Creating firewall rule for health-check ranges ..."
-
+echo "${RED_TEXT}Creating health check firewall rule...${RESET_FORMAT}"
 gcloud compute firewall-rules create fw-allow-health-check \
   --network=default \
   --action=allow \
   --direction=ingress \
   --source-ranges=130.211.0.0/22,35.191.0.0/16 \
   --target-tags=allow-health-check \
-  --rules=tcp:80 --quiet
+  --rules=tcp:80 &
 
-success "Firewall rule ${CYAN}fw-allow-health-check${WHITE} created."
-
-
-# ══════════════════════════════════════════
-#  GLOBAL IP ADDRESS
-# ══════════════════════════════════════════
-section "GLOBAL IP ADDRESS"
-
-step "Reserving global static IP ${CYAN}lb-ipv4-1${WHITE} ..."
-
-gcloud compute addresses create lb-ipv4-1 \
-  --ip-version=IPV4 \
-  --global --quiet
-
-success "Global IP reserved."
-
-LB_IP=$(gcloud compute addresses describe lb-ipv4-1 \
-  --format="get(address)" \
-  --global)
+pid=$!
+spinner $pid
+wait $pid
+echo "${BLUE_TEXT}✓ Health check firewall rule created${RESET_FORMAT}"
 
 echo
-kv "Reserved IP" "$LB_IP"
+echo "${BLUE_TEXT}${BOLD_TEXT}▬▬▬▬▬▬▬▬▬ CONFIGURING LOAD BALANCER ▬▬▬▬▬▬▬▬▬${RESET_FORMAT}"
 
+echo "${RED_TEXT}Reserving IP address...${RESET_FORMAT}"
+gcloud compute addresses create lb-ipv4-1 \
+  --ip-version=IPV4 \
+  --global &
 
-# ══════════════════════════════════════════
-#  HTTP LOAD BALANCER
-# ══════════════════════════════════════════
-section "HTTP LOAD BALANCER SETUP"
+pid=$!
+spinner $pid
+wait $pid
 
-step "Creating HTTP health check ..."
+echo "${RED_TEXT}Retrieving IP address...${RESET_FORMAT}"
+gcloud compute addresses describe lb-ipv4-1 \
+  --format="get(address)" \
+  --global
+
+echo "${RED_TEXT}Creating health check...${RESET_FORMAT}"
 gcloud compute health-checks create http http-basic-check \
-  --port 80 --quiet
-success "Health check created."
+  --port 80 &
 
-step "Creating backend service ..."
+pid=$!
+spinner $pid
+wait $pid
+
+echo "${RED_TEXT}Creating backend service...${RESET_FORMAT}"
 gcloud compute backend-services create web-backend-service \
   --protocol=HTTP \
   --port-name=http \
   --health-checks=http-basic-check \
-  --global --quiet
-success "Backend service created."
+  --global &
 
-step "Attaching managed instance group to backend service ..."
+pid=$!
+spinner $pid
+wait $pid
+
+echo "${RED_TEXT}Adding backend to service...${RESET_FORMAT}"
 gcloud compute backend-services add-backend web-backend-service \
   --instance-group=lb-backend-group \
-  --instance-group-zone="$ZONE" \
-  --global --quiet
-success "Backend attached."
+  --instance-group-zone=$ZONE \
+  --global &
 
-step "Creating URL map ..."
+pid=$!
+spinner $pid
+wait $pid
+
+echo "${RED_TEXT}Creating URL map...${RESET_FORMAT}"
 gcloud compute url-maps create web-map-http \
-    --default-service web-backend-service --quiet
-success "URL map created."
+    --default-service web-backend-service &
 
-step "Creating target HTTP proxy ..."
+pid=$!
+spinner $pid
+wait $pid
+
+echo "${RED_TEXT}Creating target HTTP proxy...${RESET_FORMAT}"
 gcloud compute target-http-proxies create http-lb-proxy \
-    --url-map web-map-http --quiet
-success "Target proxy created."
+    --url-map web-map-http &
 
-step "Creating global forwarding rule ..."
+pid=$!
+spinner $pid
+wait $pid
+
+echo "${RED_TEXT}Creating forwarding rule...${RESET_FORMAT}"
 gcloud compute forwarding-rules create http-content-rule \
    --address=lb-ipv4-1 \
    --global \
    --target-http-proxy=http-lb-proxy \
-   --ports=80 --quiet
-success "Forwarding rule created."
+   --ports=80 &
 
-echo
-print_dline
-echo -e "  ${BOLD}${GREEN}  ✔  HTTP Load Balancer ready!${RESET}"
-kv "Public IP" "$LB_IP"
-print_dline
+pid=$!
+spinner $pid
+wait $pid
 
-
-# ══════════════════════════════════════════
-#  COMPLETION BANNER
-# ══════════════════════════════════════════
+# =========================
+# FINAL MESSAGE
+# =========================
 echo
-echo -e "${BOLD}${GREEN}  ╔══════════════════════════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}${GREEN}  ║                                                          ║${RESET}"
-echo -e "${BOLD}${GREEN}  ║   ${WHITE}✅  LAB COMPLETE — All steps finished!${GREEN}║${RESET}"
-echo -e "${BOLD}${GREEN}  ║                                                          ║${RESET}"
-echo -e "${BOLD}${GREEN}  ╚══════════════════════════════════════════════════════════╝${RESET}"
+echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}          		        ✅ LAB FINISHED!                        ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
-echo -e "  ${BOLD}${RED}  https://www.youtube.com/@TechCode9${RESET}"
-echo -e "  ${BOLD}${GREEN}  Don't forget to Like, Share and Subscribe for more videos!${RESET}"
+echo "${RED_TEXT}${BOLD_TEXT}🙏 Thank you for learning with KenilithCloudX!${RESET_FORMAT}"
+echo "${RED_TEXT}${BOLD_TEXT}📢 Subscribe for more hands-on Google Cloud Labs:${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}${UNDERLINE_TEXT}https://www.youtube.com/@KenilithCloudx${RESET_FORMAT}"
 echo
