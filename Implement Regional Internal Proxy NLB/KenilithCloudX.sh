@@ -3,6 +3,7 @@
 RED_TEXT=$'\033[0;91m'
 BLUE_TEXT=$'\033[0;94m'
 BOLD_TEXT=$'\033[1m'
+UNDERLINE_TEXT=$'\033[4m'
 RESET_FORMAT=$'\033[0m'
 clear
 
@@ -12,148 +13,252 @@ echo "${BLUE_TEXT}${BOLD_TEXT}                  🚀 GOOGLE CLOUD LAB | Kenilith
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
 
-# Auto-fetch project and region/zone
-echo "${RED_TEXT}Fetching project info...${RESET_FORMAT}"
-PROJECT_ID=$(gcloud config get-value project)
-REGION=$(gcloud compute instances list --format="value(zone)" --limit=1 | sed 's/-[a-z]$//')
-ZONE=$(gcloud compute instances list --format="value(zone)" --limit=1)
-VM1=$(gcloud compute instances list --format="value(name)" | grep -v "1$" | head -1)
-VM2=$(gcloud compute instances list --format="value(name)" | grep "1$" | head -1)
+# ─── AUTO-FETCH REGION ───────────────────────────────────────────────
+echo "${BLUE_TEXT}${BOLD_TEXT}[INFO] Fetching project region${RESET_FORMAT}"
+export REGION=$(gcloud compute project-info describe \
+  --format="value(commonInstanceMetadata.items[google-compute-default-region])" 2>/dev/null)
 
-# Fallback: list all VMs and pick first two
-if [ -z "$VM1" ] || [ -z "$VM2" ]; then
-  VMS=($(gcloud compute instances list --format="value(name)"))
-  VM1="${VMS[0]}"
-  VM2="${VMS[1]}"
+if [ -z "$REGION" ]; then
+  export REGION=$(gcloud config get-value compute/region 2>/dev/null)
 fi
 
-echo "${BLUE_TEXT}Project : ${BOLD_TEXT}$PROJECT_ID${RESET_FORMAT}"
-echo "${BLUE_TEXT}Region  : ${BOLD_TEXT}$REGION${RESET_FORMAT}"
-echo "${BLUE_TEXT}Zone    : ${BOLD_TEXT}$ZONE${RESET_FORMAT}"
-echo "${BLUE_TEXT}VM1     : ${BOLD_TEXT}$VM1${RESET_FORMAT}"
-echo "${BLUE_TEXT}VM2     : ${BOLD_TEXT}$VM2${RESET_FORMAT}"
+if [ -z "$REGION" ]; then
+  echo "${RED_TEXT}[ERROR] Region not found. Set manually${RESET_FORMAT}"
+  read -p "Enter region (e.g. us-central1): " REGION
+fi
+
+export ZONE_A="${REGION}-b"
+export ZONE_C="${REGION}-c"
+
+export KENILITH_LABEL="kenilith"
+
+echo "${BLUE_TEXT}  Region : ${REGION}${RESET_FORMAT}"
+echo "${BLUE_TEXT}  Zone A : ${ZONE_A}${RESET_FORMAT}"
+echo "${BLUE_TEXT}  Zone C : ${ZONE_C}${RESET_FORMAT}"
+echo "${BLUE_TEXT}  Label  : ${KENILITH_LABEL}${RESET_FORMAT}"
 echo ""
 
-# ─── TASK 1: Instance Groups ───────────────────────────────────────────────────
+# ─── TASK 1: NETWORK & SUBNETS ───────────────────────────────────────
+echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 1] Creating VPC network and subnets...${RESET_FORMAT}"
 
-echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 1] Creating Instance Groups...${RESET_FORMAT}"
+gcloud compute networks create lb-network \
+  --subnet-mode=custom \
+  --description=" GSP636 custom VPC network" \
+  --quiet
 
-echo "${RED_TEXT}Creating web-server-1 (VM: $VM1)...${RESET_FORMAT}"
-gcloud compute instance-groups unmanaged create web-server-1 \
-  --zone="$ZONE" \
-  --project="$PROJECT_ID"
+echo "${BLUE_TEXT}  ✔ lb-network created${RESET_FORMAT}"
 
-gcloud compute instance-groups unmanaged add-instances web-server-1 \
-  --zone="$ZONE" \
-  --instances="$VM1" \
-  --project="$PROJECT_ID"
+gcloud compute networks subnets create backend-subnet \
+  --network=lb-network \
+  --region=${REGION} \
+  --range=10.1.2.0/24 \
+  --description="backend instances subnet" \
+  --quiet
 
-echo "${BLUE_TEXT}✔ web-server-1 created${RESET_FORMAT}"
+echo "${BLUE_TEXT}  ✔ backend-subnet created (10.1.2.0/24)${RESET_FORMAT}"
 
-echo "${RED_TEXT}Creating web-server-2 (VM: $VM2)...${RESET_FORMAT}"
-gcloud compute instance-groups unmanaged create web-server-2 \
-  --zone="$ZONE" \
-  --project="$PROJECT_ID"
+gcloud compute networks subnets create proxy-only-subnet \
+  --network=lb-network \
+  --region=${REGION} \
+  --range=10.129.0.0/23 \
+  --purpose=REGIONAL_MANAGED_PROXY \
+  --role=ACTIVE \
+  --description="proxy-only subnet for internal NLB Envoy proxies" \
+  --quiet
 
-gcloud compute instance-groups unmanaged add-instances web-server-2 \
-  --zone="$ZONE" \
-  --instances="$VM2" \
-  --project="$PROJECT_ID"
+echo "${BLUE_TEXT}  ✔ proxy-only-subnet created (10.129.0.0/23)${RESET_FORMAT}"
+echo ""
 
-echo "${BLUE_TEXT}✔ web-server-2 created${RESET_FORMAT}"
+# ─── TASK 2: FIREWALL RULES ──────────────────────────────────────────
+echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 2] Creating firewall rules${RESET_FORMAT}"
 
-# ─── TASK 2: Health Check ──────────────────────────────────────────────────────
+gcloud compute firewall-rules create fw-allow-ssh \
+  --network=lb-network \
+  --action=ALLOW \
+  --direction=INGRESS \
+  --target-tags=allow-ssh \
+  --source-ranges=0.0.0.0/0 \
+  --rules=tcp:22 \
+  --description="allow SSH to backend and client VMs" \
+  --quiet
+
+echo "${BLUE_TEXT}  ✔ fw-allow-ssh${RESET_FORMAT}"
+
+gcloud compute firewall-rules create fw-allow-health-check \
+  --network=lb-network \
+  --action=ALLOW \
+  --direction=INGRESS \
+  --target-tags=allow-health-check \
+  --source-ranges=130.211.0.0/22,35.191.0.0/16 \
+  --rules=tcp:80 \
+  --description="allow GCP health checker IPs to reach backends on port 80" \
+  --quiet
+
+echo "${BLUE_TEXT}  ✔ fw-allow-health-check${RESET_FORMAT}"
+
+gcloud compute firewall-rules create fw-allow-proxy-only-subnet \
+  --network=lb-network \
+  --action=ALLOW \
+  --direction=INGRESS \
+  --target-tags=allow-proxy-only-subnet \
+  --source-ranges=10.129.0.0/23 \
+  --rules=tcp:80 \
+  --description="allow proxy-only-subnet (Envoy) traffic to backends on port 80" \
+  --quiet
+
+echo "${BLUE_TEXT}  ✔ fw-allow-proxy-only-subnet${RESET_FORMAT}"
+echo ""
+
+# ─── TASK 3: INSTANCE TEMPLATE & MIGs ───────────────────────────────
+echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 3] Creating instance template...${RESET_FORMAT}"
+
+gcloud compute instance-templates create int-tcp-proxy-backend-template \
+  --region=${REGION} \
+  --network=lb-network \
+  --subnet=backend-subnet \
+  --tags=allow-ssh,allow-health-check,allow-proxy-only-subnet \
+  --description="backend template for GSP636 internal proxy NLB" \
+  --metadata=startup-script='#! /bin/bash
+# GSP636 backend startup script
+apt-get update
+apt-get install apache2 -y
+a2ensite default-ssl
+a2enmod ssl
+vm_hostname="$(curl -H "Metadata-Flavor:Google" \
+http://metadata.google.internal/computeMetadata/v1/instance/name)"
+echo "Page served from: $vm_hostname" | \
+tee /var/www/html/index.html
+systemctl restart apache2' \
+  --quiet
+
+echo "${BLUE_TEXT}  ✔ int-tcp-proxy-backend-template created${RESET_FORMAT}"
+echo ""
+
+echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 3] Creating MIG mig-a in ${ZONE_A}...${RESET_FORMAT}"
+
+gcloud compute instance-groups managed create mig-a \
+  --template=int-tcp-proxy-backend-template \
+  --size=2 \
+  --zone=${ZONE_A} \
+  --description="mig-a backend group zone ${ZONE_A}" \
+  --quiet
+
+gcloud compute instance-groups managed set-named-ports mig-a \
+  --named-ports=tcp80:80 \
+  --zone=${ZONE_A} \
+  --quiet
+
+echo "${BLUE_TEXT}  ✔ mig-a created (zone: ${ZONE_A})${RESET_FORMAT}"
+
+echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 3] Creating MIG mig-c in ${ZONE_C}...${RESET_FORMAT}"
+
+gcloud compute instance-groups managed create mig-c \
+  --template=int-tcp-proxy-backend-template \
+  --size=2 \
+  --zone=${ZONE_C} \
+  --description="mig-c backend group zone ${ZONE_C}" \
+  --quiet
+
+gcloud compute instance-groups managed set-named-ports mig-c \
+  --named-ports=tcp80:80 \
+  --zone=${ZONE_C} \
+  --quiet
+
+echo "${BLUE_TEXT}  ✔ mig-c created (zone: ${ZONE_C})${RESET_FORMAT}"
+echo ""
+
+# ─── TASK 4: LOAD BALANCER ───────────────────────────────────────────
+# Reserve IP
+gcloud compute addresses create int-tcp-ip-address \
+    --region=$REGION \
+    --subnet=backend-subnet \
+    --purpose=SHARED_LOADBALANCER_VIP
+
+# Health check
+gcloud compute health-checks create tcp tcp-health-check \
+--region=$REGION \
+    --port=80
+
+# Backend service
+gcloud compute backend-services create my-int-tcp-lb \
+    --load-balancing-scheme=INTERNAL_MANAGED \
+    --protocol=TCP \
+    --region=$REGION \
+    --health-checks=tcp-health-check \
+    --health-checks-region=$REGION \
+    --port-name=tcp80
+
+# Add MIGs
+gcloud compute backend-services add-backend my-int-tcp-lb \
+    --region=$REGION \
+    --instance-group=mig-a \
+    --instance-group-zone=${REGION}-b \
+    --balancing-mode=UTILIZATION \
+    --max-utilization=0.8
+
+gcloud compute backend-services add-backend my-int-tcp-lb \
+    --region=$REGION \
+    --instance-group=mig-c \
+    --instance-group-zone=${REGION}-c \
+    --balancing-mode=UTILIZATION \
+    --max-utilization=0.8
+
+# Create target TCP proxy
+gcloud compute target-tcp-proxies create my-int-tcp-lb-proxy \
+    --backend-service=my-int-tcp-lb \
+    --backend-service-region=$REGION
 
 echo ""
-echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 2] Creating Health Check...${RESET_FORMAT}"
-
-gcloud compute health-checks create tcp basic-http-check \
-  --region="$REGION" \
-  --port=80 \
-  --project="$PROJECT_ID"
-
-echo "${BLUE_TEXT}✔ Health check basic-http-check created${RESET_FORMAT}"
-
-# ─── TASK 2: Static IP ─────────────────────────────────────────────────────────
-
+echo "${RED_TEXT}${BOLD_TEXT}Frontend Configuration Required${RESET_FORMAT}"
+echo "${BLUE_TEXT}================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}Name           : int-tcp-forwarding-rule${RESET_FORMAT}"
+echo "${BLUE_TEXT}Subnetwork     : backend-subnet${RESET_FORMAT}"
+echo "${BLUE_TEXT}IP Address     : int-tcp-ip-address${RESET_FORMAT}"
+echo "${BLUE_TEXT}Port           : 110${RESET_FORMAT}"
+echo "${BLUE_TEXT}Proxy Protocol : Off${RESET_FORMAT}"
 echo ""
-echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 2] Reserving Static External IP...${RESET_FORMAT}"
-
-gcloud compute addresses create network-lb-ip \
-  --region="$REGION" \
-  --project="$PROJECT_ID"
-
-LB_IP=$(gcloud compute addresses describe network-lb-ip \
-  --region="$REGION" \
-  --format="value(address)" \
-  --project="$PROJECT_ID")
-
-echo "${BLUE_TEXT}✔ Static IP reserved: ${BOLD_TEXT}$LB_IP${RESET_FORMAT}"
-
-# ─── TASK 2: Backend Service ───────────────────────────────────────────────────
-
+echo "${RED_TEXT}${BOLD_TEXT}Open Load Balancer:${RESET_FORMAT}"
+echo "${BLUE_TEXT}https://console.cloud.google.com/net-services/loadbalancing/list/loadBalancers?project=${PROJECT_ID}${RESET_FORMAT}"
 echo ""
-echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 2] Creating Backend Service...${RESET_FORMAT}"
+echo "${RED_TEXT}Open: my-int-tcp-lb${RESET_FORMAT}"
+echo "${RED_TEXT}Click: Add Frontend IP and port${RESET_FORMAT}"
+read -p "${BLUE_TEXT}Press Enter to continue...${RESET_FORMAT}"
 
-gcloud compute backend-services create network-lb-backend-service \
-  --protocol=TCP \
-  --region="$REGION" \
-  --health-checks=basic-http-check \
-  --health-checks-region="$REGION" \
-  --project="$PROJECT_ID"
 
-echo "${RED_TEXT}Adding backends...${RESET_FORMAT}"
+# ─── TASK 5: CLIENT VM ───────────────────────────────────────────────
+echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 5] Creating client VM${RESET_FORMAT}"
 
-gcloud compute backend-services add-backend network-lb-backend-service \
-  --instance-group=web-server-1 \
-  --instance-group-zone="$ZONE" \
-  --region="$REGION" \
-  --project="$PROJECT_ID"
+gcloud compute instances create client-vm \
+  --zone=${ZONE_A} \
+  --network=lb-network \
+  --subnet=backend-subnet \
+  --tags=allow-ssh \
+  --description="internal client VM to test GSP636 NLB" \
+  --quiet
 
-gcloud compute backend-services add-backend network-lb-backend-service \
-  --instance-group=web-server-2 \
-  --instance-group-zone="$ZONE" \
-  --region="$REGION" \
-  --project="$PROJECT_ID"
-
-echo "${BLUE_TEXT}✔ Backend service created with both instance groups${RESET_FORMAT}"
-
-echo "${RED_TEXT}${BOLD_TEXT}MANUAL STEP REQUIRED${RESET_FORMAT}"
+echo "${BLUE_TEXT}  ✔ client-vm created in ${ZONE_A}${RESET_FORMAT}"
 echo ""
-echo "${BLUE_TEXT}Name: network-lb-backend-service${RESET_FORMAT}"
-echo "${BLUE_TEXT}Health Check: basic-http-check${RESET_FORMAT}"
-echo "${BLUE_TEXT}Backends: web-server-1 and web-server-2${RESET_FORMAT}"
-echo "${BLUE_TEXT}Frontend IP: network-lb-ip${RESET_FORMAT}"
-echo "${BLUE_TEXT}Port: 80${RESET_FORMAT}"
+
+# ─── WAIT FOR BACKENDS ───────────────────────────────────────────────
+echo "${BLUE_TEXT}${BOLD_TEXT}[WAIT] Pausse for MIG instances ${RESET_FORMAT}"
+for i in {1..5}; do
+  echo "${BLUE_TEXT}  ${i}Wait$RESET_FORMAT}"
+  sleep 60
+done
 echo ""
-echo "${RED_TEXT}Open the following URL:${RESET_FORMAT}"
-echo "${BLUE_TEXT}https://console.cloud.google.com/net-services/loadbalancing/list/loadBalancers?project=$PROJECT_ID${RESET_FORMAT}"
+
+# ─── HEALTH CHECK ────────────────────────────────────────────────────
+gcloud compute backend-services get-health my-int-tcp-lb --region=${REGION}
 echo ""
-read -p "${RED_TEXT}${BOLD_TEXT}Create the load balancer, then press ENTER to continue...${RESET_FORMAT}"
 
-echo "${BLUE_TEXT}✔ Backend service created with both instance groups${RESET_FORMAT}"
-
-# ─── TASK 2: Target Pool + Forwarding Rule ─────────────────────────────────────
-
-echo ""
-echo "${BLUE_TEXT}${BOLD_TEXT}[TASK 2] Creating Target Pool & Forwarding Rule...${RESET_FORMAT}"
-
-gcloud compute target-pools add-instances network-lb-target-pool \
-  --instances="$VM1","$VM2" \
-  --instances-zone="$ZONE" \
-  --region="$REGION" \
-  --project="$PROJECT_ID"
-
-echo "${RED_TEXT}Creating forwarding rule...${RESET_FORMAT}"
-
-echo "${BLUE_TEXT}✔ Forwarding rule created${RESET_FORMAT}"
 
 echo
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}                         ✅ LAB FINISHED!                         ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}          		        ✅ LAB FINISHED!                        ${RESET_FORMAT}"
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
 echo "${RED_TEXT}${BOLD_TEXT}🙏 Thank you for learning with KenilithCloudX!${RESET_FORMAT}"
 echo "${RED_TEXT}${BOLD_TEXT}📢 Subscribe for more hands-on Google Cloud Labs:${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}https://www.youtube.com/@KenilithCloudx${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}${UNDERLINE_TEXT}https://www.youtube.com/@KenilithCloudx${RESET_FORMAT}"
 echo
+
