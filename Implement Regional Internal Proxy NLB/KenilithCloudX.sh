@@ -1,4 +1,3 @@
-```bash
 #!/bin/bash
 
 RED_TEXT=$'\033[0;91m'
@@ -158,4 +157,3 @@ echo "${RED_TEXT}${BOLD_TEXT}🙏 Thank you for learning with KenilithCloudX!${R
 echo "${RED_TEXT}${BOLD_TEXT}📢 Subscribe for more hands-on Google Cloud Labs:${RESET_FORMAT}"
 echo "${BLUE_TEXT}${BOLD_TEXT}https://www.youtube.com/@KenilithCloudx${RESET_FORMAT}"
 echo
-```
