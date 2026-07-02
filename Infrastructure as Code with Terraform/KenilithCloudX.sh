@@ -33,7 +33,6 @@ echo "${CYAN_TEXT}${BOLD_TEXT}      SUBSCRIBE TECH & CODE- INITIATING EXECUTION.
 echo "${CYAN_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
 
-# ========================= ZONE INPUT =========================
 echo -ne "${CYAN_TEXT}Enter Compute Zone (example: us-central1-a): ${NO_COLOR}"
 read ZONE
 
@@ -42,7 +41,6 @@ if [[ -z "$ZONE" ]]; then
   exit 1
 fi
 
-# ========================= ENV SETUP =========================
 echo -e "${YELLOW_TEXT}Configuring Project Settings${NO_COLOR}"
 export REGION=${ZONE%-*}
 export PROJECT_ID=$(gcloud config get-value project)
@@ -52,7 +50,6 @@ echo -e "${GREEN_TEXT}Region: ${WHITE_TEXT}$REGION${NO_COLOR}"
 echo -e "${GREEN_TEXT}Zone: ${WHITE_TEXT}$ZONE${NO_COLOR}"
 echo
 
-# ========================= PHASE 1 =========================
 echo -e "${YELLOW_TEXT}Phase 1: Deploying Network Infrastructure${NO_COLOR}"
 cat > main.tf <<EOF
 terraform {
@@ -76,7 +73,6 @@ EOF
 terraform init
 terraform apply -auto-approve
 
-# ========================= PHASE 2 =========================
 echo -e "${YELLOW_TEXT}Phase 2: Deploying Basic VM Instance${NO_COLOR}"
 cat > main.tf <<EOF
 terraform {
@@ -112,7 +108,6 @@ EOF
 
 terraform apply -auto-approve
 
-# ========================= PHASE 3 =========================
 echo -e "${YELLOW_TEXT}Phase 3: Adding Tags to VM${NO_COLOR}"
 cat > main.tf <<EOF
 terraform {
@@ -149,7 +144,6 @@ EOF
 
 terraform apply -auto-approve
 
-# ========================= PHASE 4 =========================
 echo -e "${YELLOW_TEXT}Phase 4: Switching to COS Image${NO_COLOR}"
 cat > main.tf <<EOF
 terraform {
@@ -186,7 +180,6 @@ EOF
 
 terraform apply -auto-approve
 
-# ========================= PHASE 5 =========================
 echo -e "${YELLOW_TEXT}Phase 5: Configuring Static IP${NO_COLOR}"
 cat > main.tf <<EOF
 terraform {
