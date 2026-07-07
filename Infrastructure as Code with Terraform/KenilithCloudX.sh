@@ -25,6 +25,21 @@ echo "${BLUE_TEXT}${BOLD_TEXT}                  🚀 GOOGLE CLOUD LAB | Kenilith
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
 
+# --- NEW ADDITION: Check and Install Terraform ---
+if ! command -v terraform &> /dev/null; then
+  echo -e "${YELLOW_TEXT}Terraform is not installed. Installing now...${NO_COLOR}"
+  wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null
+  sudo apt-get update -y
+  sudo apt-get install terraform -y
+  echo -e "${GREEN_TEXT}Terraform installed successfully!${NO_COLOR}"
+  echo
+else
+  echo -e "${GREEN_TEXT}Terraform is already installed.${NO_COLOR}"
+  echo
+fi
+# -------------------------------------------------
+
 echo -ne "${CYAN_TEXT}Enter Compute Zone (example: us-central1-a): ${NO_COLOR}"
 read ZONE
 
