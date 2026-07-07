@@ -25,14 +25,6 @@ echo "${BLUE_TEXT}${BOLD_TEXT}                  🚀 GOOGLE CLOUD LAB | Kenilith
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
 
-
-clear
-# Welcome message
-echo "${CYAN_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo "${CYAN_TEXT}${BOLD_TEXT}      SUBSCRIBE TECH & CODE- INITIATING EXECUTION...  ${RESET_FORMAT}"
-echo "${CYAN_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo
-
 echo -ne "${CYAN_TEXT}Enter Compute Zone (example: us-central1-a): ${NO_COLOR}"
 read ZONE
 
@@ -222,7 +214,6 @@ EOF
 terraform plan -out static_ip
 terraform apply static_ip
 
-# ========================= PHASE 6 =========================
 echo -e "${YELLOW_TEXT}Phase 6: Deploying Storage Bucket${NO_COLOR}"
 cat > main.tf <<EOF
 terraform {
@@ -286,7 +277,7 @@ EOF
 
 terraform plan
 terraform apply -auto-approve
-echo
+
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo "${BLUE_TEXT}${BOLD_TEXT}          		        ✅ LAB FINISHED!                        ${RESET_FORMAT}"
 echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
