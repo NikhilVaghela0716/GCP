@@ -1,38 +1,29 @@
 #!/bin/bash
 
-
-# Modern Color Definitions
+# Color Definitions (RED and BLUE only)
 BLUE='\033[0;34m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
 RED='\033[0;31m'
-CYAN='\033[0;36m'
-MAGENTA='\033[0;35m'
-WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
 # =========================
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}                  🚀 GOOGLE CLOUD LAB | KenilithCloudX            ${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
+echo -e "${BLUE}==================================================================${NC}"
+echo -e "${BLUE}                 GOOGLE CLOUD - TERRAFORM LAB SETUP              ${NC}"
+echo -e "${BLUE}==================================================================${NC}"
 echo
 
-# Header with branding
 clear
-echo -e "${BOX_TOP}"
-echo -e "${BLUE}║   🚀 Terraform Infrastructure Deployment   ║${NC}"
-echo -e "${BOX_BOT}"
-echo -e "${CYAN}📺 YouTube: ${WHITE}https://youtube.com/@drabhishek.5460${NC}"
-echo -e "${CYAN}⭐ Subscribe for more DevOps tutorials! ⭐${NC}"
+echo -e "${BLUE}=========================================${NC}"
+echo -e "${BLUE}   Starting Terraform Infrastructure Run ${NC}"
+echo -e "${BLUE}=========================================${NC}"
 echo
 
 # Set environment variables
-echo -e "${YELLOW}🌍 Configuring Project Settings${NC}"
+echo -e "${RED}Step 0: Reading project configuration...${NC}"
 export REGION=${ZONE%-*}
 export PROJECT_ID=$(gcloud config get-value project)
-echo -e "${GREEN}✅ Project ID: ${WHITE}$PROJECT_ID${NC}"
-echo -e "${GREEN}✅ Region: ${WHITE}$REGION${NC}"
-echo -e "${GREEN}✅ Zone: ${WHITE}$ZONE${NC}"
+echo -e "${BLUE}Project ID : ${NC}$PROJECT_ID"
+echo -e "${BLUE}Region     : ${NC}$REGION"
+echo -e "${BLUE}Zone       : ${NC}$ZONE"
 echo
 
 cat <<'EOF' > ~/.customize_environment
@@ -44,7 +35,7 @@ EOF
 bash ~/.customize_environment
 
 # Phase 1: Network Deployment
-echo -e "${YELLOW}🛠️ Phase 1: Deploying Network Infrastructure${NC}"
+echo -e "${RED}Step 1: Creating the VPC network...${NC}"
 cat > main.tf <<EOF
 terraform {
   required_providers {
@@ -68,7 +59,7 @@ terraform init
 terraform apply -auto-approve
 
 # Phase 2: Basic VM Deployment
-echo -e "\n${YELLOW}🖥️ Phase 2: Deploying Basic VM Instance${NC}"
+echo -e "${RED}Step 2: Launching the base VM instance...${NC}"
 cat > main.tf <<EOF
 terraform {
   required_providers {
@@ -104,7 +95,7 @@ EOF
 terraform apply -auto-approve
 
 # Phase 3: Tagged VM Deployment
-echo -e "\n${YELLOW}🏷️ Phase 3: Adding Tags to VM${NC}"
+echo -e "${RED}Step 3: Applying network tags to the VM...${NC}"
 cat > main.tf <<EOF
 terraform {
   required_providers {
@@ -141,7 +132,7 @@ EOF
 terraform apply -auto-approve
 
 # Phase 4: COS Image Deployment
-echo -e "\n${YELLOW}🖼️ Phase 4: Switching to COS Image${NC}"
+echo -e "${RED}Step 4: Switching the boot disk to a Container-Optimized OS image...${NC}"
 cat > main.tf <<EOF
 terraform {
   required_providers {
@@ -178,7 +169,7 @@ EOF
 terraform apply -auto-approve
 
 # Phase 5: Static IP Configuration
-echo -e "\n${YELLOW}📡 Phase 5: Configuring Static IP${NC}"
+echo -e "${RED}Step 5: Attaching a static external IP address...${NC}"
 cat > main.tf <<EOF
 terraform {
   required_providers {
@@ -221,7 +212,7 @@ terraform plan -out static_ip
 terraform apply "static_ip"
 
 # Phase 6: Storage Bucket Deployment
-echo -e "\n${YELLOW}🪣 Phase 6: Deploying Storage Bucket${NC}"
+echo -e "${RED}Step 6: Provisioning the storage bucket and second instance...${NC}"
 cat > main.tf <<EOF
 terraform {
   required_providers {
@@ -286,11 +277,9 @@ terraform plan
 terraform apply -auto-approve
 
 echo
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}          		        ✅ LAB FINISHED!                        ${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
+echo -e "${BLUE}==================================================================${NC}"
+echo -e "${BLUE}                     DEPLOYMENT COMPLETE                        ${NC}"
+echo -e "${BLUE}==================================================================${NC}"
 echo
-echo "${RED_TEXT}${BOLD_TEXT}🙏 Thank you for learning with KenilithCloudX!${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}📢 Subscribe for more hands-on Google Cloud Labs:${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}${UNDERLINE_TEXT}https://www.youtube.com/@KenilithCloudx${RESET_FORMAT}"
+echo -e "${RED}All six phases finished without errors.${NC}"
 echo
