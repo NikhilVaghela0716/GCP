@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Define color variables
 RED_TEXT=$'\033[0;91m'
 BLUE_TEXT=$'\033[0;94m'
@@ -49,7 +51,8 @@ echo "${BOLD}${BLUE}STEP 1: Verifying Authentication${RESET}"
 gcloud auth list
 echo ""
 
-PROJECT=$(gcloud config get-value project)
+# Fallback to gcloud config if DEVSHELL_PROJECT_ID is empty
+PROJECT=${DEVSHELL_PROJECT_ID:-$(gcloud config get-value project)}
 echo "${WHITE}Current Project: ${YELLOW}$PROJECT${RESET}"
 echo ""
 
@@ -58,7 +61,7 @@ echo ""
 # ======================
 echo "${BOLD}${GREEN}STEP 2: Creating GKE Cluster${RESET}"
 gcloud container clusters create $CLUSTER_NAME \
-    --project=$DEVSHELL_PROJECT_ID \
+    --project=$PROJECT \
     --zone=$ZONE \
     --machine-type=e2-standard-2 \
     --num-nodes=2 || {
@@ -81,8 +84,8 @@ echo ""
 #  APPLICATION DEPLOYMENT
 # ======================
 echo "${BOLD}${YELLOW}STEP 4: Deploying Microservices Demo${RESET}"
-git clone -q https://github.com/GoogleCloudPlatform/microservices-demo.git &&
-cd microservices-demo && 
+git clone -q https://github.com/GoogleCloudPlatform/microservices-demo.git
+cd microservices-demo
 kubectl apply -f ./release/kubernetes-manifests.yaml --namespace dev || {
     echo "${RED}${BOLD}Failed to deploy microservices${RESET}"
     exit 1
@@ -98,7 +101,8 @@ gcloud container node-pools create $POOL_NAME \
     --cluster=$CLUSTER_NAME \
     --machine-type=custom-2-3584 \
     --num-nodes=2 \
-    --zone=$ZONE || {
+    --zone=$ZONE \
+    --project=$PROJECT || {
     echo "${RED}${BOLD}Failed to create node pool${RESET}"
     exit 1
 }
@@ -114,7 +118,7 @@ for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=default-pool -o
 done
 
 for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=default-pool -o=name); do
-    kubectl drain --force --ignore-daemonsets --delete-local-data --grace-period=10 "$node"
+    kubectl drain --force --ignore-daemonsets --delete-emptydir-data --grace-period=10 "$node"
 done
 
 kubectl get pods -o=wide --namespace=dev
@@ -127,8 +131,8 @@ echo ""
 echo "${BOLD}${RED}STEP 7: Removing Default Node Pool${RESET}"
 gcloud container node-pools delete default-pool \
     --cluster=$CLUSTER_NAME \
-    --project=$DEVSHELL_PROJECT_ID \
-    --zone $ZONE \
+    --project=$PROJECT \
+    --zone=$ZONE \
     --quiet || {
     echo "${YELLOW}Default pool may already be deleted${RESET}"
 }
@@ -194,10 +198,10 @@ echo ""
 echo "${BOLD}${BLUE}STEP 11: Enabling Cluster Autoscaling${RESET}"
 gcloud beta container clusters update $CLUSTER_NAME \
     --zone=$ZONE \
-    --project=$DEVSHELL_PROJECT_ID \
+    --project=$PROJECT \
     --enable-autoscaling \
-    --min-nodes 1 \
-    --max-nodes 6 || {
+    --min-nodes=1 \
+    --max-nodes=6 || {
     echo "${RED}${BOLD}Failed to enable cluster autoscaling${RESET}"
     exit 1
 }
