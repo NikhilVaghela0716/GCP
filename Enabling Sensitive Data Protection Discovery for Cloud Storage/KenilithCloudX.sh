@@ -1,6 +1,3 @@
-
-```
-clear
 #!/bin/bash
 # Step 1: Get TEMPLATE_ID
 echo "${BLUE}${BOLD}Fetching TEMPLATE_ID from Google Cloud DLP API${RESET}"
