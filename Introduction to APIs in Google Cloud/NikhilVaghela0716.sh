@@ -11,9 +11,9 @@ RESET_FORMAT=$(tput sgr0)
 # ====================================================
 # PRE-FLIGHT CHECKS
 # =========================
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}              🚀 GOOGLE CLOUD LAB | NIKHIL VAGHELA 🚀            ${RESET_FORMAT}"
-echo "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
+echo -e "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
+echo -e "${BLUE_TEXT}${BOLD_TEXT}              🚀 GOOGLE CLOUD LAB | KenilithCloudX               ${RESET_FORMAT}"
+echo -e "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
 
 echo "${BLUE_TEXT}${BOLD_TEXT}Checking system requirements...${RESET_FORMAT}"
@@ -169,13 +169,16 @@ else
     echo "${RED_TEXT}Warning: Verification failed.${RESET_FORMAT}"
 fi
 
-# ====================================================
-# COMPLETION FOOTER
-# ====================================================
+echo -e "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
+echo -e "${GREEN_TEXT}${BOLD_TEXT}                     ✅ LAB FINISHED!                             ${RESET_FORMAT}"
+echo -e "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
-echo "${RED_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}                 ✅ LAB COMPLETED SUCCESSFULLY!               ${RESET_FORMAT}"
-echo "${RED_TEXT}${BOLD_TEXT}==============================================================${RESET_FORMAT}"
+
+echo -e "${CYAN_TEXT}${BOLD_TEXT}🎉 Congratulations! Your Google Cloud Lab has been completed.${RESET_FORMAT}"
+echo
+echo -e "${RED_TEXT}${BOLD_TEXT}🙏 Thank you for learning with KenilithCloudX!${RESET_FORMAT}"
+echo -e "${YELLOW_TEXT}${BOLD_TEXT}📢 Subscribe for more hands-on Google Cloud Labs:${RESET_FORMAT}"
+echo -e "${BLUE_TEXT}${BOLD_TEXT}${UNDERLINE_TEXT}https://www.youtube.com/@KenilithCloudx${RESET_FORMAT}"
 echo
 echo "${BLUE_TEXT}${BOLD_TEXT}🙏 Thanks for learning with Nikhil Vaghela${RESET_FORMAT}"
 echo "${RED_TEXT}${BOLD_TEXT}📢 Subscribe for more Google Cloud Labs:${RESET_FORMAT}"
