@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -o pipefail
+
 # =========================
 # Colors & Text Formatting
 # =========================
@@ -29,35 +32,67 @@ echo
 
 gcloud auth list
 
-export PROJECT_ID=$(gcloud config get-value project)
+export PROJECT_ID="$DEVSHELL_PROJECT_ID"
 
-export PROJECT_ID=$DEVSHELL_PROJECT_ID
+export ZONE=$(gcloud compute project-info describe \
+    --format="value(commonInstanceMetadata.items[google-compute-default-zone])")
 
-export ZONE=$(gcloud compute project-info describe --format="value(commonInstanceMetadata.items[google-compute-default-zone])")
+export REGION=$(gcloud compute project-info describe \
+    --format="value(commonInstanceMetadata.items[google-compute-default-region])")
 
-export REGION=$(gcloud compute project-info describe --format="value(commonInstanceMetadata.items[google-compute-default-region])")
+gcloud config set compute/zone "$ZONE"
 
-gcloud config set compute/zone $ZONE
+echo "Project : $PROJECT_ID"
+echo "Zone    : $ZONE"
+echo "Region  : $REGION"
+echo
 
-gcloud compute instances create quickstart-vm --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --machine-type=e2-small --image-family=debian-11 --image-project=debian-cloud --tags=http-server,https-server && gcloud compute firewall-rules create default-allow-http --target-tags=http-server --allow tcp:80 --description="Allow HTTP traffic" && gcloud compute firewall-rules create default-allow-https --target-tags=https-server --allow tcp:443 --description="Allow HTTPS traffic"
+# =========================
+# Create VM
+# =========================
+gcloud compute instances create quickstart-vm \
+    --project="$PROJECT_ID" \
+    --zone="$ZONE" \
+    --machine-type=e2-small \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --tags=http-server,https-server
 
+# =========================
+# Firewall Rules
+# =========================
+if ! gcloud compute firewall-rules describe default-allow-http >/dev/null 2>&1; then
+    gcloud compute firewall-rules create default-allow-http \
+        --target-tags=http-server \
+        --allow=tcp:80 \
+        --description="Allow HTTP traffic"
+fi
 
-cat > cp_disk.sh <<'EOF_CP'
+if ! gcloud compute firewall-rules describe default-allow-https >/dev/null 2>&1; then
+    gcloud compute firewall-rules create default-allow-https \
+        --target-tags=https-server \
+        --allow=tcp:443 \
+        --description="Allow HTTPS traffic"
+fi
 
-sudo apt-get update && sudo apt-get install apache2 php7.0 -y
+# =========================
+# Create VM Setup Script
+# =========================
+cat > cp_disk.sh <<'EOF'
+#!/bin/bash
+
+set -e
+
+sudo apt-get update
+sudo apt-get install -y apache2 php
 
 curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
 sudo bash add-google-cloud-ops-agent-repo.sh --also-install
 
-# Configures Ops Agent to collect telemetry from the app and restart Ops Agent.
+sudo cp /etc/google-cloud-ops-agent/config.yaml \
+/etc/google-cloud-ops-agent/config.yaml.bak
 
-set -e
-
-# Create a back up of the existing file so existing configurations are not lost.
-sudo cp /etc/google-cloud-ops-agent/config.yaml /etc/google-cloud-ops-agent/config.yaml.bak
-
-# Configure the Ops Agent.
-sudo tee /etc/google-cloud-ops-agent/config.yaml > /dev/null << EOF
+sudo tee /etc/google-cloud-ops-agent/config.yaml >/dev/null <<CONFIG
 metrics:
   receivers:
     apache:
@@ -67,6 +102,7 @@ metrics:
       apache:
         receivers:
           - apache
+
 logging:
   receivers:
     apache_access:
@@ -79,40 +115,54 @@ logging:
         receivers:
           - apache_access
           - apache_error
+CONFIG
+
+sudo systemctl restart google-cloud-ops-agent
+
+sleep 60
 EOF
 
-sudo service google-cloud-ops-agent restart
-sleep 60
+chmod +x cp_disk.sh
 
-EOF_CP
+# =========================
+# Copy & Execute Script
+# =========================
+gcloud compute scp cp_disk.sh \
+    quickstart-vm:/tmp \
+    --project="$PROJECT_ID" \
+    --zone="$ZONE" \
+    --quiet
 
+gcloud compute ssh quickstart-vm \
+    --project="$PROJECT_ID" \
+    --zone="$ZONE" \
+    --quiet \
+    --command="bash /tmp/cp_disk.sh"
 
-gcloud compute scp cp_disk.sh quickstart-vm:/tmp --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet
-
-gcloud compute ssh quickstart-vm --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet --command="bash /tmp/cp_disk.sh"
-
-
-
-cat > cp-channel.json <<EOF_CP
+# =========================
+# Notification Channel
+# =========================
+cat > cp-channel.json <<EOF
 {
   "type": "pubsub",
   "displayName": "kenilith",
   "description": "subscribe to kenilith",
   "labels": {
-    "topic": "projects/$DEVSHELL_PROJECT_ID/topics/notificationTopic"
+    "topic": "projects/$PROJECT_ID/topics/notificationTopic"
   }
 }
-EOF_CP
+EOF
 
+gcloud beta monitoring channels create \
+    --channel-content-from-file=cp-channel.json
 
-gcloud beta monitoring channels create --channel-content-from-file=cp-channel.json
+channel_id=$(gcloud beta monitoring channels list \
+    --format="value(name)" | head -n 1)
 
-
-email_channel=$(gcloud beta monitoring channels list)
-channel_id=$(echo "$email_channel" | grep -oP 'name: \K[^ ]+' | head -n 1)
-
-
-cat > stopped-vm-alert-policy.json <<EOF_CP
+# =========================
+# Alert Policy
+# =========================
+cat > stopped-vm-alert-policy.json <<EOF
 {
   "displayName": "Apache traffic above threshold",
   "userLabels": {},
@@ -120,7 +170,7 @@ cat > stopped-vm-alert-policy.json <<EOF_CP
     {
       "displayName": "VM Instance - workload/apache.traffic",
       "conditionThreshold": {
-        "filter": "resource.type = \"gce_instance\" AND metric.type = \"workload.googleapis.com/apache.traffic\"",
+        "filter": "resource.type = \\"gce_instance\\" AND metric.type = \\"workload.googleapis.com/apache.traffic\\"",
         "aggregations": [
           {
             "alignmentPeriod": "60s",
@@ -147,19 +197,19 @@ cat > stopped-vm-alert-policy.json <<EOF_CP
   ],
   "severity": "SEVERITY_UNSPECIFIED"
 }
-EOF_CP
+EOF
 
-
-gcloud alpha monitoring policies create --policy-from-file=stopped-vm-alert-policy.json
+gcloud alpha monitoring policies create \
+    --policy-from-file=stopped-vm-alert-policy.json
 
 # =========================
 # Footer
 # =========================
+echo
 echo -e "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo -e "${GREEN_TEXT}${BOLD_TEXT}                     ✅ LAB FINISHED!                             ${RESET_FORMAT}"
 echo -e "${BLUE_TEXT}${BOLD_TEXT}==================================================================${RESET_FORMAT}"
 echo
-
 echo -e "${CYAN_TEXT}${BOLD_TEXT}🎉 Congratulations! Your Google Cloud Lab has been completed.${RESET_FORMAT}"
 echo
 echo -e "${RED_TEXT}${BOLD_TEXT}🙏 Thank you for learning with KenilithCloudX!${RESET_FORMAT}"
