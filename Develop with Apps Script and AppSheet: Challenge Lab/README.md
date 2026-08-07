@@ -12,7 +12,7 @@
 ## **Task 2: Add Automation to an AppSheet App**
 
 ### 1. Open Drive [Here](https://drive.google.com/drive/my-drive)
-### 2. Download [Here]([https://docs.google.com/1zbZDz4Wru3zmsnKYXlSMP5OdcBWZrhNE/export?format=xlsx](https://docs.google.com/spreadsheets/d/1zbZDz4Wru3zmsnKYXlSMP5OdcBWZrhNE/export?format=xlsx))
+### 2. Download [Here](https://docs.google.com/spreadsheets/d/1zbZDz4Wru3zmsnKYXlSMP5OdcBWZrhNE/export?format=xlsx)
 ---
 
 ## 💬 **Task 3: Create and Publish an Apps Script Chat Bot**
