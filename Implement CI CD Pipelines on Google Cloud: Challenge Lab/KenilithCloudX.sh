@@ -220,7 +220,7 @@ for cluster in "${CLUSTERS[@]}"; do
   
   while [ "$status" != "RUNNING" ]; do
     echo "${YELLOW_TEXT}Cluster ${BOLD_TEXT}$cluster${RESET_FORMAT}${YELLOW_TEXT} is currently ${BOLD_TEXT}$status${RESET_FORMAT}${YELLOW_TEXT}. Waiting for it to be 'RUNNING'...${RESET_FORMAT}"
-    echo "${YELLOW_TEXT}Tip: While waiting, you can check out my channel for more awesome tutorials! [https://www.youtube.com/@drabhishek.5460]${RESET_FORMAT}"
+    echo "${YELLOW_TEXT}SubsCribe${RESET_FORMAT}"
     for i in $(seq 10 -1 1); do
       echo -ne "${YELLOW_TEXT}   Waiting... ${BOLD_TEXT}$i${RESET_FORMAT}${YELLOW_TEXT} seconds remaining. \r${RESET_FORMAT}"
       sleep 1
@@ -291,7 +291,7 @@ while true; do
     echo "${GREEN_TEXT}${BOLD_TEXT}Rollout to staging for 'web-app-001' SUCCEEDED!${RESET_FORMAT}"
     break
   fi
-  echo "${YELLOW_TEXT}${BOLD_TEXT}   Current rollout status: ${GREEN_TEXT}${BOLD_TEXT}$status${RESET_FORMAT}${YELLOW_TEXT}. Waiting... (Check my channel for tips! [https://www.youtube.com/@drabhishek.5460])${RESET_FORMAT}"
+  echo "${YELLOW_TEXT}${BOLD_TEXT}   Current rollout status: ${GREEN_TEXT}${BOLD_TEXT}$status${RESET_FORMAT}${YELLOW_TEXT}. Waiting... ${RESET_FORMAT}"
   for i in $(seq 10 -1 1); do
     echo -ne "${YELLOW_TEXT}${BOLD_TEXT}   Checking again in $i seconds... \r${RESET_FORMAT}"
     sleep 1
@@ -314,7 +314,7 @@ while true; do
     echo "${GREEN_TEXT}${BOLD_TEXT}Rollout for 'web-app-001' is now PENDING_APPROVAL for production!${RESET_FORMAT}"
     break
   fi
-  echo "${YELLOW_TEXT}${BOLD_TEXT}   Current rollout status: ${GREEN_TEXT}${BOLD_TEXT}$status${RESET_FORMAT}${YELLOW_TEXT}. Waiting... (My channel has great content! [https://www.youtube.com/@drabhishek.5460])${RESET_FORMAT}"
+  echo "${YELLOW_TEXT}${BOLD_TEXT}   Current rollout status: ${GREEN_TEXT}${BOLD_TEXT}$status${RESET_FORMAT}${YELLOW_TEXT}. Waiting...${RESET_FORMAT}"
   for i in $(seq 10 -1 1); do
     echo -ne "${YELLOW_TEXT}${BOLD_TEXT}   Checking again in $i seconds... \r${RESET_FORMAT}"
     sleep 1
@@ -337,7 +337,7 @@ while true; do
     echo "${GREEN_TEXT}${BOLD_TEXT}Production rollout for 'web-app-001' SUCCEEDED!${RESET_FORMAT}"
     break
   fi
-  echo "${YELLOW_TEXT}${BOLD_TEXT}   Current rollout status: ${GREEN_TEXT}${BOLD_TEXT}$status${RESET_FORMAT}${YELLOW_TEXT}. Waiting... (Find more at my channel! [https://www.youtube.com/@drabhishek.5460])${RESET_FORMAT}"
+  echo "${YELLOW_TEXT}${BOLD_TEXT}   Current rollout status: ${GREEN_TEXT}${BOLD_TEXT}$status${RESET_FORMAT}${YELLOW_TEXT}. Waiting... ${RESET_FORMAT}"
   for i in $(seq 10 -1 1); do
     echo -ne "${YELLOW_TEXT}${BOLD_TEXT}   Checking again in $i seconds... \r${RESET_FORMAT}"
     sleep 1
@@ -393,7 +393,7 @@ while true; do
     echo "${GREEN_TEXT}${BOLD_TEXT}Rollout to staging for 'web-app-002' SUCCEEDED!${RESET_FORMAT}"
     break
   fi
-  echo "${YELLOW_TEXT}${BOLD_TEXT}   Current rollout status: ${GREEN_TEXT}${BOLD_TEXT}$status${RESET_FORMAT}${YELLOW_TEXT}. Waiting... (Don't forget my channel! [https://www.youtube.com/@drabhishek.5460])${RESET_FORMAT}"
+  echo "${YELLOW_TEXT}${BOLD_TEXT}   Current rollout status: ${GREEN_TEXT}${BOLD_TEXT}$status${RESET_FORMAT}${YELLOW_TEXT}. Waiting... ${RESET_FORMAT}"
   for i in $(seq 10 -1 1); do
     echo -ne "${YELLOW_TEXT}${BOLD_TEXT}   Checking again in $i seconds... \r${RESET_FORMAT}"
     sleep 1
