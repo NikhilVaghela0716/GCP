@@ -11,9 +11,7 @@
 ---
 
 ## 💻 Run in Cloud Shell:
-```
-export REGION=
-```
+
 ```
 curl -LO "https://raw.githubusercontent.com/NikhilVaghela0716/GCP/main/Perform%20Predictive%20Data%20Analysis%20in%20BigQuery%3A%20Challenge%20Lab/KenilithCloudX.sh"
 chmod +x KenilithCloudX.sh
